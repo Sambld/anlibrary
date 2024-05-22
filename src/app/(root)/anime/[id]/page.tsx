@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
 import { formatAndDivideNumber } from "@/lib/utils";
-import { getFullAnimeById } from "@/myanimelist_api/api";
+import { getFullAnimeById } from "@/lib/myanimelist_api/api";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -30,6 +30,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { InformationItem } from "@/components/information-item";
 
 const AnimePage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
@@ -63,7 +64,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
     relations,
   } = anime.data;
   return (
-    <div className="flex flex-col gap-2 m-4 p-5 max-sm:p-2 max-sm:m-2  max-sm:mb-12">
+    <div className="flex flex-col gap-2 p-10 max-sm:p-2 max-sm:m-2  max-sm:mb-12">
       <div className="flex gap-5 w-full max-lg:flex-col max-lg:items-center">
         {/* /////////////////image/////////////////////////// */}
         <div className="flex flex-col justify-between">
@@ -169,7 +170,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
               <InformationItem type="Duration" value={duration} />
             </div>
             {/* <Separator orientation="vertical" className="max-md:hidden" /> */}
-            <div className="self-start h-full flex flex-col gap-3 max-md:w-full w-1/2">
+            <div className="self-start h-full flex flex-col gap-3 max-md:w-full w-1/2 md:ml-4">
               {/* //////////////// members //////////////////// */}
               <InformationItem
                 type="Members"
@@ -242,7 +243,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
                     English Title
                   </a>
                   {title_synonyms.map((synonym, index) => (
-                    <>
+                    <div key={synonym}>
                       <Separator />
 
                       <a
@@ -253,7 +254,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
                         <span className="text-xs">Sysnonym #{index + 1}</span> :{" "}
                         {synonym}
                       </a>
-                    </>
+                    </div>
                   ))}
                 </div>
               </HoverCardContent>
@@ -263,6 +264,10 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
               <Library size={24} className="mr-2" />
               Add to Library
             </Button>
+
+            <Link href={`/anime/${id}/download`}>
+              <Button>Download</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -281,7 +286,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
           <Separator />
 
           {relations.map((relation) => (
-            <>
+            <div key={relation.relation}>
               <div
                 key={relation.relation + 1}
                 className="flex gap-4 items-start mt-5"
@@ -302,28 +307,10 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
               <Separator className="my-4" />
-            </>
+            </div>
           ))}
         </div>
       </div>
-    </div>
-  );
-};
-
-const InformationItem = ({
-  children,
-  type,
-  value,
-}: {
-  children?: React.ReactNode;
-  type: string;
-  value?: string | number;
-}) => {
-  return (
-    <div className="flex gap-4 items-baseline">
-      <span className="font-semibold text-gray-500 min-w-20">{type}:</span>
-      {value && <span className="text-sm">{value}</span>}
-      {children}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Anime } from "./types.d";
+import { Anime } from "./types";
 export type Anime = {
   mal_id: number;
   url: string;

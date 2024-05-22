@@ -12,19 +12,19 @@ export const getMenuList = (pathname: string): MenuType[] => {
     {
       href: "/",
       label: "Home",
-      active: pathname.includes("/"),
+      active: pathname === "/",
       Icon: Home,
     },
     {
       href: "/today",
       label: "Today releases",
-      active: pathname.includes("/today"),
+      active: pathname === "/today",
       Icon: AlarmClock,
     },
     {
       href: "/library",
       label: "Library",
-      active: pathname.includes("/library"),
+      active: pathname === "/library",
       Icon: Library,
     },
   ];

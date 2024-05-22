@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { getMenuList } from "@/lib/menu-list";
 import MenuItem from "./menu-item";
 import Image from "next/image";
-import { ModeToggle } from "./ModeToggle";
+import { ModeToggle } from "./mode-toggle";
 
 function SideBar() {
   const path = usePathname();

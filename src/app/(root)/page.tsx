@@ -1,12 +1,15 @@
 /* eslint-disable react/display-name */
-import AnimeCard from "@/components/home/AnimeCard";
+import AnimeCard from "@/components/home/anime-card-vertical";
 import AnimeSearchSkeleton from "@/components/home/anime-search-skeleton";
 import SearchInput from "@/components/home/search-input";
 import { SearchResults } from "@/components/home/search-results";
 import { SeasonSchedule } from "@/components/home/season-schedule";
 import { Input } from "@/components/ui/input";
-import { weekDays } from "@/constants";
-import { getAnimeBySearchQuery, getAnimeSchedule } from "@/myanimelist_api/api";
+import { weekDays } from "@/constants/consts";
+import {
+  getAnimeBySearchQuery,
+  getAnimeSchedule,
+} from "@/lib/myanimelist_api/api";
 import { revalidatePath } from "next/cache";
 import { Suspense } from "react";
 

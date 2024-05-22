@@ -9,7 +9,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
       <Image
         style={{
           zIndex: -100,
-          opacity: "5%",
+          opacity: "6%",
           position: "fixed",
           top: 0,
           left: 0,

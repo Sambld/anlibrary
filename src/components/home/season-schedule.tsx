@@ -1,7 +1,7 @@
-import { weekDays } from "@/constants";
-import AnimeCard from "./AnimeCard";
-import { AnimeSchedule } from "@/myanimelist_api/types";
-import { getAnimeSchedule } from "@/myanimelist_api/api";
+import { weekDays } from "@/constants/consts";
+import AnimeCard from "./anime-card-vertical";
+import { AnimeSchedule } from "@/lib/myanimelist_api/types";
+import { getAnimeSchedule } from "@/lib/myanimelist_api/api";
 
 export const SeasonSchedule = async () => {
   const seasonAnimes = await getAnimeSchedule();
@@ -20,7 +20,7 @@ export const SeasonSchedule = async () => {
                 key={anime.mal_id}
                 mal_id={anime.mal_id}
                 title={anime.title}
-                episodes={anime.episodes!}
+                episodes={anime.episodes || "?"}
                 image={anime.images.webp.image_url}
               />
             ))}

@@ -1,6 +1,6 @@
 import { PaginationLinks } from "../pagination";
-import AnimeCard from "./AnimeCard";
-import { getAnimeBySearchQuery } from "@/myanimelist_api/api";
+import AnimeCard from "./anime-card-vertical";
+import { getAnimeBySearchQuery } from "@/lib/myanimelist_api/api";
 export const dynamic = "force-dynamic";
 export const SearchResults = async ({
   searchQuery,
@@ -22,7 +22,7 @@ export const SearchResults = async ({
             key={anime.mal_id}
             mal_id={anime.mal_id}
             title={anime.title}
-            episodes={anime.episodes!}
+            episodes={anime.episodes || "?"}
             image={anime.images.webp.image_url}
           />
         ))}
