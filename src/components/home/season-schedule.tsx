@@ -1,7 +1,7 @@
 import { weekDays } from "@/constants/consts";
 import AnimeCard from "./anime-card-vertical";
-import { AnimeSchedule } from "@/lib/myanimelist_api/types";
-import { getAnimeSchedule } from "@/lib/myanimelist_api/api";
+import { AnimeSchedule } from "@/lib/jikan_api/types";
+import { getAnimeSchedule } from "@/lib/jikan_api/api";
 
 export const SeasonSchedule = async () => {
   const seasonAnimes = await getAnimeSchedule();

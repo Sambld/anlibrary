@@ -20,7 +20,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
         src={BackgroundImage}
         alt="background image"
       />
-      <SideBar />
+      <SideBar user={null} />
 
       <div className="flex-1">{children}</div>
     </div>

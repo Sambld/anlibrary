@@ -21,6 +21,9 @@ const EpisodeBroadcastCountDown = ({
     const nowInAsiaTokyo = new Date(
       now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })
     );
+    if (!broadcast.day) {
+      return setTimeDiff({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+    }
     const nextBroadcastInAsiaTokyo = getNextBroadcastDate(
       broadcast.day.slice(0, -1),
       broadcast.time
@@ -39,8 +42,9 @@ const EpisodeBroadcastCountDown = ({
 
   return (
     <div>
-      <p>
-        New Episode in: {timeDiff.days}d {timeDiff.hours}h {timeDiff.minutes}m{" "}
+      <p className="max-sm:text-xs text-sm">
+        New Episode in: <br className="sm:hidden" />
+        {timeDiff.days}d {timeDiff.hours}h {timeDiff.minutes}m{" "}
         {timeDiff.seconds}s
       </p>
     </div>

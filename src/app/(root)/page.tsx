@@ -1,16 +1,9 @@
 /* eslint-disable react/display-name */
-import AnimeCard from "@/components/home/anime-card-vertical";
 import AnimeSearchSkeleton from "@/components/home/anime-search-skeleton";
 import SearchInput from "@/components/home/search-input";
 import { SearchResults } from "@/components/home/search-results";
 import { SeasonSchedule } from "@/components/home/season-schedule";
-import { Input } from "@/components/ui/input";
-import { weekDays } from "@/constants/consts";
-import {
-  getAnimeBySearchQuery,
-  getAnimeSchedule,
-} from "@/lib/myanimelist_api/api";
-import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 
 export default async function Home({
@@ -23,8 +16,10 @@ export default async function Home({
 }) {
   const query = searchParams?.q || "";
   const page = searchParams?.page || 1;
-  // fake delay
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  // const cookieStore = cookies();
+  // console.log(cookieStore.getAll());
+
   return (
     <section className="flex flex-col gap-4 p-10 max-sm:p-4">
       <h1 className="text-lg">
@@ -39,6 +34,7 @@ export default async function Home({
           <SearchResults searchQuery={query} page={page} />
         </Suspense>
       ) : (
+        // <></>
         <SeasonSchedule />
       )}
     </section>

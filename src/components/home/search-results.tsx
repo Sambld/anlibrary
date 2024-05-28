@@ -1,6 +1,6 @@
 import { PaginationLinks } from "../pagination";
 import AnimeCard from "./anime-card-vertical";
-import { getAnimeBySearchQuery } from "@/lib/myanimelist_api/api";
+import { getAnimeBySearchQuery } from "@/lib/jikan_api/api";
 export const dynamic = "force-dynamic";
 export const SearchResults = async ({
   searchQuery,

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
 import { formatAndDivideNumber } from "@/lib/utils";
-import { getFullAnimeById } from "@/lib/myanimelist_api/api";
+import { getFullAnimeById } from "@/lib/jikan_api/api";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -31,6 +31,9 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { InformationItem } from "@/components/information-item";
+import DownloadButton from "@/components/download-button";
+import { isAnimeInLibrary } from "@/lib/actions/library";
+import AddAnime from "@/components/anime-page/add-to-library";
 
 const AnimePage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
@@ -63,6 +66,9 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
     streaming,
     relations,
   } = anime.data;
+
+  const { isInLibrary } = await isAnimeInLibrary(parseInt(id));
+  console.log(isInLibrary);
   return (
     <div className="flex flex-col gap-2 p-10 max-sm:p-2 max-sm:m-2  max-sm:mb-12">
       <div className="flex gap-5 w-full max-lg:flex-col max-lg:items-center">
@@ -219,7 +225,10 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
             </div>
           </div>
           {/* /////////////////// links and library/////////////// */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
+            <Link href={`/anime/${id}/download`}>
+              <DownloadButton />
+            </Link>
             <HoverCard openDelay={100}>
               <HoverCardTrigger>
                 <Button>
@@ -259,15 +268,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
                 </div>
               </HoverCardContent>
             </HoverCard>
-
-            <Button>
-              <Library size={24} className="mr-2" />
-              Add to Library
-            </Button>
-
-            <Link href={`/anime/${id}/download`}>
-              <Button>Download</Button>
-            </Link>
+            <AddAnime animeId={parseInt(id)} isInLibrary={isInLibrary!} />
           </div>
         </div>
       </div>

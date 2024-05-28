@@ -17,4 +17,5 @@ export const releasers = [
   "[ASW]",
   "[EMBER]",
   "[Judas]",
+  "[Anime Time]",
 ];

@@ -11,14 +11,22 @@ import { notFound } from "next/navigation";
 export const getAnimeScheduleByDay = async (
   day: string
 ): Promise<AnimeScheduleDay> => {
-  const url = `${JIKAN_BASE_URL}/schedules?filter=${day}&kids=false`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch anime schedule");
-  }
+  const url = `${JIKAN_BASE_URL}/schedules?filter=${day}&kids=false&kids=false`;
+  let condition = true;
+  let response;
+  do {
+    response = await fetch(url, { next: { revalidate: 360 } });
+    if (!response.ok) {
+      // throw new Error("Failed to fetch anime schedule by day");
+      console.error(url);
+      console.log("Failed to fetch anime schedule by day retrying...");
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+    condition = !response.ok;
+  } while (condition);
+
   const result: AnimeScheduleDay = await response.json();
   // getting all the animes from the next page if there is one
-  console.log(result.pagination.has_next_page);
   if (result.pagination.has_next_page) {
     const response = await fetch(url + `&page=2`);
     const result2: AnimeScheduleDay = await response.json();
@@ -45,7 +53,7 @@ export const getAnimeBySearchQuery = async ({
   filter?: string;
 }): Promise<AnimeBySearchQuery> => {
   const url = `${JIKAN_BASE_URL}/anime?q=${q}&page=${page}&sfw=true`;
-  const response = await fetch(url);
+  const response = await fetch(url, { next: { revalidate: 3600 * 24 } });
   if (!response.ok) {
     throw new Error("Failed to fetch anime search results");
   }
@@ -56,7 +64,7 @@ export const getFullAnimeById = async (
   id: string
 ): Promise<{ data: AnimeFull }> => {
   const url = `${JIKAN_BASE_URL}/anime/${id}/full`;
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: "force-cache" });
   if (!response.ok) {
     notFound();
   }

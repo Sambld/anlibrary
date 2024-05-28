@@ -4,7 +4,7 @@ export type MenuType = {
   href: string;
   label: string;
   active: boolean;
-  Icon: typeof Home;
+  Icon: React.ComponentType<any>;
 };
 
 export const getMenuList = (pathname: string): MenuType[] => {

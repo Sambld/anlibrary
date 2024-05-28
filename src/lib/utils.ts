@@ -127,3 +127,10 @@ export const isYesterday = (date: Date) => {
     date.getFullYear() === yesterday.getFullYear()
   );
 };
+
+export const animeNameShaper = (name: string) => {
+  // remove the season part from the anime name
+
+  // Example: "Attack on Titan 4th Season Part X" => "Attack on Titan 4th Season"
+  return name.replace(/(\d+)(st|nd|rd|th) Season/, "S0$1");
+};

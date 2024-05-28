@@ -1,8 +1,8 @@
-import { releasers } from "./../../../constants/consts";
 import { NYAA_BASE_URL } from "@/constants/consts";
 import * as cheerio from "cheerio";
 import { getEpisodes, getSearchResultCount } from "./helpers";
 import { NyaaEpisode } from "./types";
+import { animeNameShaper } from "../utils";
 export const getNyaaSearchUrl = (query: string, page = 1) => {
   return `${NYAA_BASE_URL}/?f=0&c=1_2&q=${query}&p=${page}`;
 };
@@ -18,7 +18,7 @@ export const getAnimeSearchPageByReleaser = async ({
 }) => {
   try {
     const searchUrl = getNyaaSearchUrl(`${releaser} ${animeName}`);
-    console.log(searchUrl);
+    // console.log(searchUrl);
     const response = await fetch(searchUrl, { next: { revalidate: 360 } });
     const html = await response.text();
     const $ = cheerio.load(html);
@@ -36,8 +36,9 @@ export const getAnimeEpisodesByReleaser = async ({
   releaser: string;
 }): Promise<NyaaEpisode[] | undefined> => {
   try {
-    const maxPages = 2;
+    const maxPages = 10;
     let episodes: NyaaEpisode[] = [];
+    animeName = animeNameShaper(animeName);
     for (let page = 1; page <= maxPages; page++) {
       const searchPage = await getAnimeSearchPageByReleaser({
         animeName,
@@ -48,7 +49,7 @@ export const getAnimeEpisodesByReleaser = async ({
         const items = getEpisodes(searchPage);
         episodes = [...episodes, ...items];
         const { total } = getSearchResultCount(searchPage);
-        if (total <= 75) {
+        if (total <= page * 75) {
           break;
         }
       }

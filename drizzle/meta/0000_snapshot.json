@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e9481121-d03e-4a86-8767-f56254a72492",
+  "id": "6b38f574-0460-44d8-8c43-61b54e120afc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "anime_configs": {
@@ -45,26 +45,12 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "anime_configs_anime_id_animes_id_fk": {
-          "name": "anime_configs_anime_id_animes_id_fk",
-          "tableFrom": "anime_configs",
-          "tableTo": "animes",
-          "columnsFrom": [
-            "anime_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "anime_download_links": {
-      "name": "anime_download_links",
+    "library": {
+      "name": "library",
       "columns": {
         "id": {
           "name": "id",
@@ -80,30 +66,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "episode_number": {
-          "name": "episode_number",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "releaser": {
-          "name": "releaser",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "encoding_type": {
-          "name": "encoding_type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "download_link": {
-          "name": "download_link",
-          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -119,12 +84,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "anime_download_links_anime_id_animes_id_fk": {
-          "name": "anime_download_links_anime_id_animes_id_fk",
-          "tableFrom": "anime_download_links",
-          "tableTo": "animes",
+        "library_user_id_users_id_fk": {
+          "name": "library_user_id_users_id_fk",
+          "tableFrom": "library",
+          "tableTo": "users",
           "columnsFrom": [
-            "anime_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -136,8 +101,52 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "animes": {
-      "name": "animes",
+    "session": {
+      "name": "session",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "session_user_id_users_id_fk": {
+          "name": "session_user_id_users_id_fk",
+          "tableFrom": "session",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
       "columns": {
         "id": {
           "name": "id",
@@ -146,30 +155,16 @@
           "notNull": true,
           "autoincrement": true
         },
-        "title": {
-          "name": "title",
+        "username": {
+          "name": "username",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "mal_id": {
-          "name": "mal_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "release_day": {
-          "name": "release_day",
+        "password": {
+          "name": "password",
           "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "active": {
-          "name": "active",
-          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
