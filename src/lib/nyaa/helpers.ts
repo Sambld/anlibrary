@@ -17,7 +17,15 @@ export const getSearchResultCount = ($: cheerio.CheerioAPI) => {
   }
 };
 
-export const getEpisodes = ($: cheerio.CheerioAPI): NyaaEpisode[] => {
+export const getEpisodes = ({
+  $,
+  filters,
+}: {
+  $: cheerio.CheerioAPI;
+  filters?: {
+    onlyActive: boolean;
+  };
+}): NyaaEpisode[] => {
   const items = $(".torrent-list tbody tr");
   const result: NyaaEpisode[] = [];
 
@@ -33,6 +41,11 @@ export const getEpisodes = ($: cheerio.CheerioAPI): NyaaEpisode[] => {
     const date = item.find("td:nth-child(5)").text() || "";
     const seeders = parseInt(item.find("td:nth-child(6)").text().trim(), 10);
     const leechers = parseInt(item.find("td:nth-child(7)").text().trim(), 10);
+
+    if (filters?.onlyActive && seeders === 0) {
+      console.log("skipping", title);
+      return;
+    }
 
     result.push({
       title,

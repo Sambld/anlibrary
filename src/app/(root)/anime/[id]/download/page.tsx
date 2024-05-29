@@ -39,10 +39,10 @@ import Link from "next/link";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
-  console.log(anime.data.title);
+  console.log(anime.data);
 
   return (
-    <div className="max-sm:p-5 p-10 mb-12">
+    <div className="max-sm:p-5 p-10 mb-12 ">
       <div className="flex gap-5 max-sm:flex-col">
         <Image
           src={anime.data.images.webp.large_image_url}
@@ -75,10 +75,14 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <div className="p-5">filters</div>
+      {/* <div className="p-5">filters</div> */}
 
       <Suspense fallback={<LoadingInfinity />}>
-        <EpisodesList animeTitle={anime.data.title} />
+        <EpisodesList
+          animeTitle={anime.data.title}
+          englishTitle={anime.data.title_english}
+          airing={anime.data.airing}
+        />
       </Suspense>
     </div>
   );

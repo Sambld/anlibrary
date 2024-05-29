@@ -4,9 +4,13 @@ import { validateRequest } from "../auth/lucia";
 import { library } from "@/db/schema";
 import { and, eq, is } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getFullAnimeById } from "../jikan_api/api";
+import { convertToUTCTimeZone } from "../utils";
 
 export const toggleAnime = async (animeId: number) => {
+  // this is fine since the request would be cached for 24 hours
+  const anime = await getFullAnimeById(animeId.toString());
   try {
     const { user } = await validateRequest();
     if (!user) {
@@ -24,23 +28,39 @@ export const toggleAnime = async (animeId: number) => {
       await db
         .delete(library)
         .where(and(eq(library.animeId, animeId), eq(library.userId, user.id)));
-      revalidatePath(`/anime/${animeId}`);
+
+      revalidatePath("/library");
       return {
         message: "Anime removed from library",
+        isInLibrary: false,
       };
     }
 
+    const { day, time } = convertToUTCTimeZone({
+      dayOfWeek: anime.data.broadcast.day!,
+      time: anime.data.broadcast.time!,
+    });
+
+    // for rate limiting issues we store some of the anime data in the library table for quick access and to avoid hammering the jikan api
     await db.insert(library).values({
       animeId,
       userId: user.id,
+      image: anime.data.images.webp.image_url,
+      title: anime.data.title,
+      episodes: anime.data.episodes || 0,
+      broadcastDay: day,
+      broadcastTime: time,
+      status: anime.data.status || "Unknown",
     });
 
-    revalidatePath(`/anime/${animeId}`);
-
+    revalidatePath("/library");
     return {
       message: "Anime added to library",
+      isInLibrary: true,
     };
   } catch (error) {
+    console.log(error);
+
     return {
       error: "Failed to toggle anime",
     };
@@ -64,9 +84,7 @@ export const getLibrary = async () => {
       library: libraryEntries,
     };
   } catch (error) {
-    return {
-      error: "Failed to fetch library",
-    };
+    notFound();
   }
 };
 

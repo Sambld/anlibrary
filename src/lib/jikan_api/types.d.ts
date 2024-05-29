@@ -157,7 +157,7 @@ export type AnimeFull = {
   title_synonyms: string[];
   type: string;
   source: string;
-  episodes: number;
+  episodes?: number;
   status: string;
   airing: boolean;
   aired: {
@@ -190,10 +190,10 @@ export type AnimeFull = {
   season: string;
   year: number;
   broadcast: {
-    day: string;
-    time: string;
-    timezone: string;
-    string: string;
+    day?: string;
+    time?: string;
+    timezone?: string;
+    string?: string;
   };
   producers: {
     mal_id: number;

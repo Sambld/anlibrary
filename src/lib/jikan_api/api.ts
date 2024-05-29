@@ -15,12 +15,12 @@ export const getAnimeScheduleByDay = async (
   let condition = true;
   let response;
   do {
-    response = await fetch(url, { next: { revalidate: 360 } });
+    response = await fetchWithRetry(url, { next: { revalidate: 360 } });
     if (!response.ok) {
       // throw new Error("Failed to fetch anime schedule by day");
       console.error(url);
       console.log("Failed to fetch anime schedule by day retrying...");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     condition = !response.ok;
   } while (condition);
@@ -28,7 +28,9 @@ export const getAnimeScheduleByDay = async (
   const result: AnimeScheduleDay = await response.json();
   // getting all the animes from the next page if there is one
   if (result.pagination.has_next_page) {
-    const response = await fetch(url + `&page=2`);
+    const response = await fetchWithRetry(`${url}&page=2`, {
+      next: { revalidate: 360 },
+    });
     const result2: AnimeScheduleDay = await response.json();
     result.data = result.data.concat(result2.data);
   }
@@ -53,7 +55,9 @@ export const getAnimeBySearchQuery = async ({
   filter?: string;
 }): Promise<AnimeBySearchQuery> => {
   const url = `${JIKAN_BASE_URL}/anime?q=${q}&page=${page}&sfw=true`;
-  const response = await fetch(url, { next: { revalidate: 3600 * 24 } });
+  const response = await fetchWithRetry(url, {
+    next: { revalidate: 3600 * 24 },
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch anime search results");
   }
@@ -64,9 +68,38 @@ export const getFullAnimeById = async (
   id: string
 ): Promise<{ data: AnimeFull }> => {
   const url = `${JIKAN_BASE_URL}/anime/${id}/full`;
-  const response = await fetch(url, { cache: "force-cache" });
-  if (!response.ok) {
+  console.log(url);
+  const response = await fetchWithRetry(url, {
+    next: { revalidate: 3600 * 24 },
+  });
+  console.log(response.status);
+  const result: { data: AnimeFull } = await response.json();
+
+  if (!response.ok || result.data === undefined) {
     notFound();
   }
-  return response.json();
+
+  return result;
+};
+
+export const fetchWithRetry = async (
+  url: string,
+  cacheOptions: RequestInit
+) => {
+  let condition = true;
+  const maxRetries = 10;
+  let retryCount = 0;
+  let response = null;
+  do {
+    response = await fetch(url, cacheOptions);
+    if (!response.ok) {
+      console.error(url);
+      console.log("Failed to fetch retrying...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    condition = !response.ok;
+
+    retryCount++;
+  } while (condition && retryCount < maxRetries);
+  return response;
 };

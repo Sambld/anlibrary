@@ -34,10 +34,12 @@ import { InformationItem } from "@/components/information-item";
 import DownloadButton from "@/components/download-button";
 import { isAnimeInLibrary } from "@/lib/actions/library";
 import AddAnime from "@/components/anime-page/add-to-library";
+import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
 
 const AnimePage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const anime = await getFullAnimeById(id);
+
   const {
     title,
     title_english,
@@ -229,46 +231,15 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
             <Link href={`/anime/${id}/download`}>
               <DownloadButton />
             </Link>
-            <HoverCard openDelay={100}>
-              <HoverCardTrigger>
-                <Button>
-                  <Skull size={24} className="mr-2" />
-                  Open in Nyaa
-                </Button>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-56">
-                <div className="w-full flex flex-col gap-1">
-                  <a
-                    href={`https://nyaa.si/?f=0&c=0_0&q=${title}`}
-                    target="_blank"
-                  >
-                    Default Title
-                  </a>
-                  <Separator />
-                  <a
-                    href={`https://nyaa.si/?f=0&c=0_0&q=${title_english}`}
-                    target="_blank"
-                  >
-                    English Title
-                  </a>
-                  {title_synonyms.map((synonym, index) => (
-                    <div key={synonym}>
-                      <Separator />
-
-                      <a
-                        key={synonym}
-                        href={`https://nyaa.si/?f=0&c=0_0&q=${synonym}`}
-                        target="_blank"
-                      >
-                        <span className="text-xs">Sysnonym #{index + 1}</span> :{" "}
-                        {synonym}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-            <AddAnime animeId={parseInt(id)} isInLibrary={isInLibrary!} />
+            <AddAnime
+              animeId={parseInt(id)}
+              isInLibrary={isInLibrary || false}
+            />
+            <OpenInNyaa
+              title={title}
+              title_english={title_english}
+              title_synonyms={title_synonyms}
+            />
           </div>
         </div>
       </div>

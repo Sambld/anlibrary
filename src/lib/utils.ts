@@ -1,3 +1,4 @@
+import { weekDays } from "@/constants/consts";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -133,4 +134,60 @@ export const animeNameShaper = (name: string) => {
 
   // Example: "Attack on Titan 4th Season Part X" => "Attack on Titan 4th Season"
   return name.replace(/(\d+)(st|nd|rd|th) Season/, "S0$1");
+};
+
+export const convertToUTCTimeZone = ({
+  dayOfWeek,
+  time,
+}: {
+  dayOfWeek?: string;
+  time?: string;
+}) => {
+  if (!dayOfWeek || !time) {
+    return { day: "Unknown", time: "Unknown" };
+  }
+  if (dayOfWeek.endsWith("s")) {
+    dayOfWeek = dayOfWeek.slice(0, -1);
+  }
+
+  // Helper function to get the next occurrence of a specific day
+  const getNextDayOfWeek = (day: string): Date => {
+    const now = new Date();
+
+    const targetDay = weekDays.indexOf(day);
+    now.setDate(now.getDate() + ((targetDay + (7 - now.getDay())) % 7));
+    return now;
+  };
+
+  // Get the next occurrence of the specified day
+  const nextDay = getNextDayOfWeek(dayOfWeek);
+
+  // Combine the date with the provided time
+  const [hours, minutes] = time.split(":").map(Number);
+
+  nextDay.setUTCHours(hours, minutes);
+
+  //pretend that the time is in the Asia/Tokyo timezone and convert it to the utc timezone
+
+  let timeInMilliseconds = nextDay.getTime();
+
+  // Asia/Tokyo is UTC+9
+  const timeZoneOffset = 9 * 60 * 60 * 1000; // Convert 9 hours to milliseconds
+
+  // Subtract the time zone offset to convert to UTC
+  timeInMilliseconds -= timeZoneOffset;
+
+  // Create a new Date object with the adjusted time
+  const utcDate = new Date(timeInMilliseconds);
+
+  // Return the UTC date string in ISO 8601 format
+  return {
+    day: weekDays[utcDate.getDay()],
+    time: utcDate.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "UTC",
+    }),
+  };
 };

@@ -4,34 +4,49 @@ import React from "react";
 import { Button } from "../ui/button";
 import { toggleAnime } from "@/lib/actions/library";
 import { useToast } from "../ui/use-toast";
+import clsx from "clsx";
 type AddAnimeProps = {
   animeId: number;
   isInLibrary: boolean;
 };
-const AddAnime = ({ animeId, isInLibrary = false }: AddAnimeProps) => {
+const AddAnime = ({ animeId, isInLibrary }: AddAnimeProps) => {
+  const [isPending, startTransition] = React.useTransition();
+  const [inLibrary, setInLibrary] = React.useState(isInLibrary);
+  // console.log("state of inLibrary : ", inLibrary);
+
   const { toast } = useToast();
   const handleSubmit = async () => {
-    const response = await toggleAnime(animeId);
-    if (response.error) {
-      toast({
-        title: "Error",
-        description: response.error,
-        duration: 5000,
-      });
-    } else {
-      console.log(response.message);
-      toast({
-        title: "Success",
-        description: response.message,
-        duration: 5000,
-      });
-    }
+    startTransition(async () => {
+      const response = await toggleAnime(animeId);
+      if (response.error) {
+        toast({
+          title: "Error",
+          description: response.error,
+          duration: 1000,
+        });
+      } else {
+        if (response.isInLibrary !== undefined) {
+          setInLibrary(response.isInLibrary);
+          toast({
+            description: response.message,
+            duration: 1000,
+          });
+        }
+      }
+    });
   };
   return (
-    <Button onClick={handleSubmit}>
+    <Button
+      className={clsx(` dark:text-white`, {
+        "bg-blue-600 hover:bg-blue-500": !inLibrary,
+        "bg-red-600 hover:bg-red-500": inLibrary,
+      })}
+      disabled={isPending}
+      onClick={handleSubmit}
+    >
       <Library size={24} className="mr-2" />
-      {!isInLibrary && "Add to Library"}
-      {isInLibrary && "Remove from Library"}
+      {!inLibrary && "Add to Library"}
+      {inLibrary && "Remove from Library"}
     </Button>
   );
 };

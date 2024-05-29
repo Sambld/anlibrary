@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { type SessionData } from "@/lib/auth/auth";
+import { type SessionData } from "@/lib/auth/lucia";
 
 const SessionContext = React.createContext({} as SessionData);
 

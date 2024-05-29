@@ -21,6 +21,12 @@ export const animeConfigs = sqliteTable("anime_configs", {
 export const library = sqliteTable("library", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   animeId: integer("anime_id").notNull(),
+  image: text("image").notNull(),
+  title: text("title").notNull(),
+  episodes: integer("episodes").notNull(),
+  broadcastDay: text("broadcast_day").notNull(),
+  broadcastTime: text("broadcast_time").notNull(),
+  status: text("status").notNull(),
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),

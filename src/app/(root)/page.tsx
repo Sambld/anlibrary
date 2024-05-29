@@ -22,7 +22,7 @@ export default async function Home({
 
   return (
     <section className="flex flex-col gap-4 p-10 max-sm:p-4">
-      <h1 className="text-lg">
+      <h1 className="text-2xl font-bold">
         {query ? `Searching for ( ${query} )` : "Current Season Schedule"}
       </h1>
       <SearchInput />
