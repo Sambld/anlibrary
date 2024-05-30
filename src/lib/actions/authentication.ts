@@ -52,8 +52,6 @@ export const signUp = async (formdata: z.infer<typeof signUpFormSchema>) => {
   }
   const { username, password, confirmPassword } = parsed.data;
 
-  console.log(username, password, confirmPassword);
-
   if (password !== confirmPassword) {
     return {
       message: "Passwords do not match",

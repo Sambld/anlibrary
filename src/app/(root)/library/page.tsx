@@ -8,7 +8,6 @@ const Library = async () => {
 
   const today = weekDays[new Date().getDay()];
   const airingToday = library.filter((anime) => anime.broadcastDay === today);
-  console.log(airingToday);
   const notAiringToday = library.filter(
     (anime) => anime.broadcastDay !== today
   );

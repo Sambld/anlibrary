@@ -42,10 +42,13 @@ const EpisodeBroadcastCountDown = ({
 
   return (
     <div>
-      <p className="max-sm:text-xs text-sm">
-        New Episode in: <br className="sm:hidden" />
-        {timeDiff.days}d {timeDiff.hours}h {timeDiff.minutes}m{" "}
-        {timeDiff.seconds}s
+      <p className="max-sm:text-sm text-sm">
+        New Episode in:
+        {"  "}
+        <span className="text-[14px] font-semibold">
+          {timeDiff.days}d {timeDiff.hours}h {timeDiff.minutes}m{" "}
+          {timeDiff.seconds}s
+        </span>
       </p>
     </div>
   );

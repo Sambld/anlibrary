@@ -17,16 +17,15 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { logout } from "@/lib/actions/authentication";
+import Link from "next/link";
 
 export const SideBar = () => {
-  // console.log(user);
-  // const user = await getUser();
   const { user } = useSession();
   const path = usePathname();
   const menuList = getMenuList(path);
   return (
     <>
-      <nav className="h-screen sticky left-0 top-0 w-60 max-md:w-auto max-md:p-2 max-md:pt-6 border p-6 flex flex-col gap-5 max-sm:hidden">
+      <nav className="h-screen sticky left-0 top-0 w-60 max-md:w-auto max-md:p-2 max-md:pt-6  border p-6 flex flex-col gap-5 max-sm:hidden">
         <Image
           src={"/assets/logo.png"}
           width={100}
@@ -41,6 +40,7 @@ export const SideBar = () => {
             <LogOutButton />
           </div>
         )}
+        {/* <div className="max-sm:mt-10"> */}
         {menuList.map(({ href, label, active, Icon }) => (
           <MenuItem
             key={label}
@@ -50,29 +50,35 @@ export const SideBar = () => {
             Icon={Icon}
           />
         ))}
+        {/* </div> */}
         <div className="flex flex-col justify-end h-full max-md:items-center">
-          <div className="flex gap-2 max-md:flex-col items-center">
-            {!user && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <UserIcon size={15} />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  closebutton={"hidden"}
-                  className="w-[500px] max-sm:w-[90%] min-h-[300px] p-4 "
-                >
-                  <AuthPage />
-                </DialogContent>
-              </Dialog>
-            )}
-            <ModeToggle />
+          <div className="flex gap-2 flex-col max-md:flex-col-reverse">
             {user && <LogOutButton className="md:hidden" />}
+            <ModeToggle />
+            {!user && (
+              <>
+                <div className="flex flex-col gap-2 max-md:hidden">
+                  <Link href="/sign-in">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/sign-up">
+                    <Button variant="outline" size="sm" className="w-full">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </div>
+                <Button variant="outline" size="icon" className="md:hidden">
+                  <UserIcon size={15} />
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
+      {/* navigation bar for small screens */}
       <nav className="w-full fixed left-0 bottom-0 justify-evenly bg-white items-center dark:bg-black border p-2 flex gap-5 z-10 sm:hidden">
         {menuList.map(({ href, label, active, Icon }) => (
           <MenuItem
@@ -84,24 +90,16 @@ export const SideBar = () => {
           />
         ))}
 
-        {!user && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="icon">
-                <UserIcon size={15} />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              closebutton={"hidden"}
-              className="w-[500px] max-sm:w-[90%] min-h-[300px] p-4  "
-            >
-              <AuthPage />
-            </DialogContent>
-          </Dialog>
-        )}
-
         <ModeToggle />
         {user && <LogOutButton />}
+
+        {!user && (
+          <Link href="/sign-in">
+            <Button variant="outline" size="icon">
+              <UserIcon size={15} />
+            </Button>
+          </Link>
+        )}
       </nav>
     </>
   );
@@ -115,8 +113,7 @@ const LogOutButton = ({ className }: { className?: string }) => {
           <Button
             onClick={() => logout()}
             variant="outline"
-            size="sm"
-            className="self-end border-none"
+            className=" border-none"
           >
             <LogOut size={15} />
           </Button>

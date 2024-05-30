@@ -2,7 +2,7 @@
 import { Library } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
-import { toggleAnime } from "@/lib/actions/library";
+import { toggleAnime } from "@/lib/actions/library-server-actions";
 import { useToast } from "../ui/use-toast";
 import clsx from "clsx";
 type AddAnimeProps = {
@@ -12,7 +12,6 @@ type AddAnimeProps = {
 const AddAnime = ({ animeId, isInLibrary }: AddAnimeProps) => {
   const [isPending, startTransition] = React.useTransition();
   const [inLibrary, setInLibrary] = React.useState(isInLibrary);
-  // console.log("state of inLibrary : ", inLibrary);
 
   const { toast } = useToast();
   const handleSubmit = async () => {

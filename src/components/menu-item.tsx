@@ -9,7 +9,7 @@ function MenuItem({ href, label, active, Icon }: MenuType) {
     <Link href={href}>
       <Button
         variant={active ? "secondary" : "ghost"}
-        className="sm:w-full justify-start h-10 mb-1"
+        className="sm:w-full justify-start h-10 my-1"
       >
         <div className="flex gap-4">
           <Icon size={18} />

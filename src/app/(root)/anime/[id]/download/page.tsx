@@ -36,10 +36,11 @@ import { NYAA_BASE_URL, releasers } from "@/constants/consts";
 import EpisodesList from "./episodes-list";
 import LoadingInfinity from "@/components/loading-infinity";
 import Link from "next/link";
+import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
+import { Button } from "@/components/ui/button";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
-  console.log(anime.data);
 
   return (
     <div className="max-sm:p-5 p-10 mb-12 ">
@@ -76,7 +77,22 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* <div className="p-5">filters</div> */}
-
+      <div className="mt-4 flex gap-4 flex-wrap">
+        <OpenInNyaa
+          title={anime.data.title}
+          title_english={anime.data.title_english}
+          title_synonyms={[]}
+        />
+        <a
+          href={`https://subdl.com/search?query=${anime.data.title}`}
+          target="_blank"
+        >
+          <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
+            <Download size={24} className="mr-2" />
+            Download Subtitles
+          </Button>
+        </a>
+      </div>
       <Suspense fallback={<LoadingInfinity />}>
         <EpisodesList
           animeTitle={anime.data.title}

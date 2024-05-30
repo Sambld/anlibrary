@@ -133,7 +133,16 @@ export const animeNameShaper = (name: string) => {
   // remove the season part from the anime name
 
   // Example: "Attack on Titan 4th Season Part X" => "Attack on Titan 4th Season"
-  return name.replace(/(\d+)(st|nd|rd|th) Season/, "S0$1");
+  return name.replace(
+    /(\d+)(st|nd|rd|th) Season|Season (\d+)/,
+    (match, p1, p2, p3) => {
+      if (p3) {
+        return "S0" + p3;
+      } else {
+        return "S0" + p1;
+      }
+    }
+  );
 };
 
 export const convertToUTCTimeZone = ({

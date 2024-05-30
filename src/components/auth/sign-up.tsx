@@ -29,7 +29,6 @@ const SignUp = () => {
   });
   const onSubmit = async (data: z.infer<typeof signUpFormSchema>) => {
     const result = await signUp(data);
-    console.log("response : ", result);
     if (result?.message) {
       form.setError("root", { message: result.message });
     }

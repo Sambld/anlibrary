@@ -38,29 +38,37 @@ const OpenInNyaa = ({
           >
             Default Title
           </a>
-          <Separator />
-          <a
-            className="text-sm"
-            href={`https://nyaa.si/?f=0&c=0_0&q=${title_english}`}
-            target="_blank"
-          >
-            English Title
-          </a>
-          {title_synonyms.map((synonym, index) => (
-            <div key={synonym}>
+          {title_english && (
+            <>
               <Separator />
-
               <a
                 className="text-sm"
-                key={synonym}
-                href={`https://nyaa.si/?f=0&c=0_0&q=${synonym}`}
+                href={`https://nyaa.si/?f=0&c=0_0&q=${title_english}`}
                 target="_blank"
               >
-                <span className="text-xs underline">Sysnonym #{index + 1}</span>{" "}
-                : {synonym}
+                English Title
               </a>
-            </div>
-          ))}
+            </>
+          )}
+
+          {title_synonyms.length > 0 &&
+            title_synonyms.map((synonym, index) => (
+              <div key={synonym}>
+                <Separator />
+
+                <a
+                  className="text-sm"
+                  key={synonym}
+                  href={`https://nyaa.si/?f=0&c=0_0&q=${synonym}`}
+                  target="_blank"
+                >
+                  <span className="text-xs underline">
+                    Sysnonym #{index + 1}
+                  </span>{" "}
+                  : {synonym}
+                </a>
+              </div>
+            ))}
         </div>
       </HoverCardContent>
     </HoverCard>

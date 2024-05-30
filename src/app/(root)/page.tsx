@@ -21,7 +21,7 @@ export default async function Home({
   // console.log(cookieStore.getAll());
 
   return (
-    <section className="flex flex-col gap-4 p-10 max-sm:p-4">
+    <section className=" flex flex-col gap-4 p-10 max-sm:mb-12 max-sm:p-4">
       <h1 className="text-2xl font-bold">
         {query ? `Searching for ( ${query} )` : "Current Season Schedule"}
       </h1>

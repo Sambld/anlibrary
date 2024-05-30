@@ -55,7 +55,10 @@ const EpisodesList = async ({
     undefined;
   if (airing) {
     releasersEpisodes = await getAnimeEpisodesByReleasers({
-      animeName: animeTitle,
+      animeName: {
+        english: englishTitle,
+        japanese: animeTitle,
+      },
       releasers: releasers,
     });
   }
@@ -65,22 +68,6 @@ const EpisodesList = async ({
   const releaserKeys = releasersEpisodes ? Object.keys(releasersEpisodes) : [];
   return (
     <>
-      <div className="mt-4 flex gap-4">
-        <OpenInNyaa
-          title={animeTitle}
-          title_english={englishTitle}
-          title_synonyms={[]}
-        />
-        <a
-          href={`https://subdl.com/search?query=${animeTitle}`}
-          target="_blank"
-        >
-          <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
-            <Download size={24} className="mr-2" />
-            Download Subtitles
-          </Button>
-        </a>
-      </div>
       {releaserKeys.length === 0 && batches.length === 0 && (
         <div className="relative flex flex-col justify-center items-center mt-20 gap-4 h-full">
           <p className="text-center">

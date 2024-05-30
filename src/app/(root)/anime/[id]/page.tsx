@@ -70,7 +70,6 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
   } = anime.data;
 
   const { isInLibrary } = await isAnimeInLibrary(parseInt(id));
-  console.log(isInLibrary);
   return (
     <div className="flex flex-col gap-2 p-10 max-sm:p-2 max-sm:m-2  max-sm:mb-12">
       <div className="flex gap-5 w-full max-lg:flex-col max-lg:items-center">

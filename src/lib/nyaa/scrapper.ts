@@ -18,13 +18,14 @@ export const getAnimeSearchPageByReleaser = async ({
 }) => {
   try {
     const searchUrl = getNyaaSearchUrl(`${releaser} ${animeName}`);
-    // console.log(searchUrl);
+    console.log(searchUrl);
     const response = await fetch(searchUrl, { next: { revalidate: 360 } });
     const html = await response.text();
     const $ = cheerio.load(html);
     return $;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -34,7 +35,7 @@ export const getAnimeEpisodesByReleaser = async ({
 }: {
   animeName: string;
   releaser: string;
-}): Promise<NyaaEpisode[] | undefined> => {
+}): Promise<NyaaEpisode[]> => {
   try {
     const maxPages = 2;
     let episodes: NyaaEpisode[] = [];
@@ -57,6 +58,7 @@ export const getAnimeEpisodesByReleaser = async ({
     return episodes;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -64,7 +66,10 @@ export const getAnimeEpisodesByReleasers = async ({
   animeName,
   releasers,
 }: {
-  animeName: string;
+  animeName: {
+    english: string;
+    japanese: string;
+  };
   releasers: string[];
 }) => {
   try {
@@ -72,17 +77,37 @@ export const getAnimeEpisodesByReleasers = async ({
       [key: string]: NyaaEpisode[];
     } = {};
     for (const releaser of releasers) {
-      const releaserEpisodes = await getAnimeEpisodesByReleaser({
-        animeName,
-        releaser,
-      });
-      if (releaserEpisodes && releaserEpisodes?.length > 0) {
-        episodes[releaser] = releaserEpisodes;
+      let releaserEpisodes: NyaaEpisode[] = [];
+
+      for (let languageName of [animeName.english, animeName.japanese]) {
+        const _releaserEpisodes = await getAnimeEpisodesByReleaser({
+          animeName: languageName,
+          releaser,
+        });
+        if (_releaserEpisodes && _releaserEpisodes?.length > 0) {
+          const episodesSet = new Set<NyaaEpisode>([
+            ...releaserEpisodes,
+            ..._releaserEpisodes,
+          ]);
+
+          releaserEpisodes = Array.from(episodesSet);
+          break;
+        }
       }
+      episodes[releaser] = releaserEpisodes;
+
+      // const _releaserEpisodes = await getAnimeEpisodesByReleaser({
+      //   animeName,
+      //   releaser,
+      // });
+      // if (_releaserEpisodes && _releaserEpisodes?.length > 0) {
+      //   episodes[releaser] = _releaserEpisodes;
+      // }
     }
     return episodes;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
