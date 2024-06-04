@@ -2,10 +2,7 @@ import { db } from "@/db";
 import { validateRequest } from "../auth/lucia";
 import { library } from "@/db/schema";
 import { and, eq, is } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
-import { getFullAnimeById } from "../jikan_api/api";
-import { convertToUTCTimeZone } from "../utils";
 import { isRedirectError } from "next/dist/client/components/redirect";
 export const getLibrary = async () => {
   try {
@@ -41,7 +38,7 @@ export const isAnimeInLibrary = async (animeId: number) => {
     const existingLibraryEntry = await db
       .select()
       .from(library)
-      .where(and(eq(library.animeId, animeId), eq(library.userId, user.id)));
+      .where(and(eq(library.animeId, animeId)));
 
     return {
       isInLibrary: existingLibraryEntry.length > 0,

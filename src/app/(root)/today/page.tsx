@@ -1,8 +1,6 @@
 import { weekDays } from "@/constants/consts";
 import { getAnimeScheduleByDay } from "@/lib/jikan_api/api";
-import AnimeCard from "@/components/home/anime-card-vertical";
 import React from "react";
-import { Input } from "@/components/ui/input";
 import AnimeCardHorizontal from "@/components/today-animes/anime-card-horizontal";
 
 const TodayAnimes = async () => {

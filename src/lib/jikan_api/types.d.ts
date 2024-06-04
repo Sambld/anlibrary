@@ -69,12 +69,7 @@ export type Anime = {
   background: string | null;
   season: string;
   year: number;
-  broadcast: {
-    day: string;
-    time: string;
-    timezone: string;
-    string: string;
-  };
+  broadcast: Broadcast;
   producers: Array<{
     mal_id: number;
     type: string;
@@ -117,6 +112,12 @@ export type Anime = {
     name: string;
     url: string;
   }>;
+};
+export type Broadcast = {
+  day?: string;
+  time?: string;
+  timezone?: string;
+  string?: string;
 };
 
 export type AnimeFull = {
@@ -189,12 +190,7 @@ export type AnimeFull = {
   background: string | null;
   season: string;
   year: number;
-  broadcast: {
-    day?: string;
-    time?: string;
-    timezone?: string;
-    string?: string;
-  };
+  broadcast: Broadcast;
   producers: {
     mal_id: number;
     type: string;

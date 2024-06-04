@@ -2,7 +2,7 @@
 import { Library } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
-import { toggleAnime } from "@/lib/actions/library-server-actions";
+import { toggleAnime } from "@/lib/library/actions";
 import { useToast } from "../ui/use-toast";
 import clsx from "clsx";
 type AddAnimeProps = {

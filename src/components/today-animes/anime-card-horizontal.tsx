@@ -11,10 +11,10 @@ type AnimeCardHorizontalProps = {
   image: string;
   duration: string;
   broadcast: {
-    day: string;
-    time: string;
-    timezone: string;
-    string: string;
+    day?: string;
+    time?: string;
+    timezone?: string;
+    string?: string;
   };
 };
 const AnimeCardHorizontal = ({

@@ -2,7 +2,7 @@
 
 import z from "zod";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { userTable } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { signInFormSchema, signUpFormSchema } from "../form-schema";
 import { createHash } from "crypto";
@@ -23,8 +23,8 @@ export const signIn = async (formdata: z.infer<typeof signInFormSchema>) => {
   const passwordHash = createHash("sha256").update(password).digest("hex");
   let results = await db
     .select()
-    .from(users)
-    .where(and(eq(users.username, username), eq(users.password, passwordHash)))
+    .from(userTable)
+    .where(and(eq(userTable.username, username), eq(userTable.password, passwordHash)))
     .execute();
   if (results.length === 0) {
     return {
@@ -60,8 +60,8 @@ export const signUp = async (formdata: z.infer<typeof signUpFormSchema>) => {
 
   const existingUser = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username));
+    .from(userTable)
+    .where(eq(userTable.username, username));
   if (existingUser.length > 0) {
     return {
       message: "User already exists",
@@ -69,15 +69,17 @@ export const signUp = async (formdata: z.infer<typeof signUpFormSchema>) => {
   }
 
   const passwordHash = createHash("sha256").update(password).digest("hex");
-  const user = db
-    .insert(users)
+  const user = await db
+    .insert(userTable)
     .values({
       username,
       password: passwordHash,
-    })
-    .returning({ id: users.id });
+    }).returning({ id: userTable.id });
 
-  const session = await lucia.createSession(user.get().id, {});
+    
+
+    
+  const session = await lucia.createSession( user[0].id , {}); 
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,

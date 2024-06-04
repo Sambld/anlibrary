@@ -41,6 +41,9 @@ export const toggleAnime = async (animeId: number) => {
       time: anime.data.broadcast.time!,
     });
 
+    console.log("original day and time" + anime.data.broadcast.string);
+    console.log("converted day and time" + day + " " + time);
+
     // for rate limiting issues we store some of the anime data in the library table for quick access and to avoid hammering the jikan api
     await db.insert(library).values({
       animeId,

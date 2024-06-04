@@ -37,9 +37,10 @@ export const getAnimeEpisodesByReleaser = async ({
   releaser: string;
 }): Promise<NyaaEpisode[]> => {
   try {
-    const maxPages = 2;
+    const maxPages = 1;
     let episodes: NyaaEpisode[] = [];
     animeName = animeNameShaper(animeName);
+    console.log(animeName)
     for (let page = 1; page <= maxPages; page++) {
       const searchPage = await getAnimeSearchPageByReleaser({
         animeName,
@@ -80,29 +81,24 @@ export const getAnimeEpisodesByReleasers = async ({
       let releaserEpisodes: NyaaEpisode[] = [];
 
       for (let languageName of [animeName.english, animeName.japanese]) {
-        const _releaserEpisodes = await getAnimeEpisodesByReleaser({
-          animeName: languageName,
-          releaser,
-        });
-        if (_releaserEpisodes && _releaserEpisodes?.length > 0) {
-          const episodesSet = new Set<NyaaEpisode>([
-            ...releaserEpisodes,
-            ..._releaserEpisodes,
-          ]);
+        if (languageName){
 
-          releaserEpisodes = Array.from(episodesSet);
-          break;
+          const _releaserEpisodes = await getAnimeEpisodesByReleaser({
+            animeName: languageName,
+            releaser,
+          });
+          if (_releaserEpisodes && _releaserEpisodes?.length > 0) {
+            const episodesSet = new Set<NyaaEpisode>([
+              ...releaserEpisodes,
+              ..._releaserEpisodes,
+            ]);
+  
+            releaserEpisodes = Array.from(episodesSet);
+            break;
+          }
         }
       }
       episodes[releaser] = releaserEpisodes;
-
-      // const _releaserEpisodes = await getAnimeEpisodesByReleaser({
-      //   animeName,
-      //   releaser,
-      // });
-      // if (_releaserEpisodes && _releaserEpisodes?.length > 0) {
-      //   episodes[releaser] = _releaserEpisodes;
-      // }
     }
     return episodes;
   } catch (error) {
@@ -111,11 +107,19 @@ export const getAnimeEpisodesByReleasers = async ({
   }
 };
 
-export const getAnimeBatches = async (animeTitle: string) => {
+export const getAnimeBatches = async ({animeTitle}: {animeTitle: {
+  english: string;
+  japanese: string;
+}}) => {
+
+  const shapedAnimeTitle = animeNameShaper(animeTitle.english);
+  const shapedAnimeTitleJapanese = animeNameShaper(animeTitle.japanese);
   try {
     const searchUrls = [
-      getNyaaSearchUrl(`${animeTitle} BD`, "s=seeders&o=desc"),
-      getNyaaSearchUrl(`${animeTitle} Batch`, "s=seeders&o=desc"),
+      getNyaaSearchUrl(`${shapedAnimeTitle} BD`, "s=seeders&o=desc"),
+      getNyaaSearchUrl(`${shapedAnimeTitle} Batch`, "s=seeders&o=desc"),
+      getNyaaSearchUrl(`${shapedAnimeTitleJapanese} BD`, "s=seeders&o=desc"),
+      getNyaaSearchUrl(`${shapedAnimeTitleJapanese} Batch`, "s=seeders&o=desc"),
     ];
 
     // Fetch both URLs in parallel

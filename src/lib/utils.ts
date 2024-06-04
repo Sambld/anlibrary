@@ -133,7 +133,7 @@ export const animeNameShaper = (name: string) => {
   // remove the season part from the anime name
 
   // Example: "Attack on Titan 4th Season Part X" => "Attack on Titan 4th Season"
-  return name.replace(
+  const newName =  name.replace(
     /(\d+)(st|nd|rd|th) Season|Season (\d+)/,
     (match, p1, p2, p3) => {
       if (p3) {
@@ -143,6 +143,7 @@ export const animeNameShaper = (name: string) => {
       }
     }
   );
+  return newName
 };
 
 export const convertToUTCTimeZone = ({
@@ -158,6 +159,7 @@ export const convertToUTCTimeZone = ({
   if (dayOfWeek.endsWith("s")) {
     dayOfWeek = dayOfWeek.slice(0, -1);
   }
+  dayOfWeek = dayOfWeek.toLowerCase();
 
   // Helper function to get the next occurrence of a specific day
   const getNextDayOfWeek = (day: string): Date => {
@@ -171,12 +173,13 @@ export const convertToUTCTimeZone = ({
   // Get the next occurrence of the specified day
   const nextDay = getNextDayOfWeek(dayOfWeek);
 
+  console.log("next day", nextDay);
+
   // Combine the date with the provided time
   const [hours, minutes] = time.split(":").map(Number);
 
   nextDay.setUTCHours(hours, minutes);
 
-  //pretend that the time is in the Asia/Tokyo timezone and convert it to the utc timezone
 
   let timeInMilliseconds = nextDay.getTime();
 
@@ -191,6 +194,7 @@ export const convertToUTCTimeZone = ({
 
   // Return the UTC date string in ISO 8601 format
   return {
+    date: utcDate,
     day: weekDays[utcDate.getDay()],
     time: utcDate.toLocaleTimeString("en-US", {
       hour: "2-digit",

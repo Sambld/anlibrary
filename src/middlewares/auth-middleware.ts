@@ -1,8 +1,5 @@
-import { createHash } from "crypto";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { validateRequest, validateRequestAction } from "@/lib/auth/lucia";
-import { LOGIN_URL } from "@/constants/consts";
+
 
 export async function authMiddleware(
   request: NextRequest
@@ -14,7 +11,7 @@ export async function authMiddleware(
 
   if (protectedPaths.some((path) => pathname.startsWith(path))) {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth`,
+      new URL('/api/auth', request.url),
       {
         method: "GET",
         // credentials: "include",

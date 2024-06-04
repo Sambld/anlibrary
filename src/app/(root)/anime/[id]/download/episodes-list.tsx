@@ -1,18 +1,5 @@
-import { getFullAnimeById } from "@/lib/jikan_api/api";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
@@ -20,25 +7,11 @@ import {
   getAnimeEpisodesByReleaser,
   getAnimeEpisodesByReleasers,
 } from "@/lib/nyaa/scrapper";
-import Image from "next/image";
-import { InformationItem } from "@/components/information-item";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowBigDown,
-  ArrowBigUp,
-  ArrowUp,
-  Download,
-  Magnet,
-} from "lucide-react";
-import { isToday, isYesterday } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 import React from "react";
-import { NYAA_BASE_URL, releasers } from "@/constants/consts";
-import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
+import { releasers } from "@/constants/consts";
 import AccordionDownloadItem from "@/components/anime-download/accordion-download-item";
 import { NyaaEpisode } from "@/lib/nyaa/types";
-import { Button } from "@/components/ui/button";
 
 type EpisodesListProps = {
   animeTitle: string;
@@ -51,9 +24,10 @@ const EpisodesList = async ({
   englishTitle,
   airing,
 }: EpisodesListProps) => {
-  let releasersEpisodes: { [key: string]: NyaaEpisode[] } | undefined =
-    undefined;
+  let releasersEpisodes: { [key: string]: NyaaEpisode[] } | null =
+    null;
   if (airing) {
+    
     releasersEpisodes = await getAnimeEpisodesByReleasers({
       animeName: {
         english: englishTitle,
@@ -63,8 +37,15 @@ const EpisodesList = async ({
     });
   }
 
-  const batches = await getAnimeBatches(animeTitle);
+  console.log(animeTitle);
+  let batches: NyaaEpisode[] = [];
+  if (!airing) {
+   batches = await getAnimeBatches({animeTitle : {
+    english: englishTitle,
+    japanese: animeTitle,
 
+  }});
+  }
   const releaserKeys = releasersEpisodes ? Object.keys(releasersEpisodes) : [];
   return (
     <>

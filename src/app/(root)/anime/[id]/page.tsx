@@ -32,9 +32,10 @@ import Link from "next/link";
 import React from "react";
 import { InformationItem } from "@/components/information-item";
 import DownloadButton from "@/components/download-button";
-import { isAnimeInLibrary } from "@/lib/actions/library";
+import { isAnimeInLibrary } from "@/lib/library";
 import AddAnime from "@/components/anime-page/add-to-library";
 import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
+import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
 
 const AnimePage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
@@ -52,6 +53,7 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
     type,
     rating,
     status,
+    airing,
     url,
     aired,
     year,
@@ -225,6 +227,8 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
               <InformationItem type="Source" value={source} />
             </div>
           </div>
+          {/* {airing && 
+            <EpisodeBroadcastCountDown broadcast={broadcast}  />} */}
           {/* /////////////////// links and library/////////////// */}
           <div className="flex gap-3 flex-wrap">
             <Link href={`/anime/${id}/download`}>

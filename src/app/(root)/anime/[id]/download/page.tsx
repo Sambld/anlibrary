@@ -1,43 +1,18 @@
 import { getFullAnimeById } from "@/lib/jikan_api/api";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  getAnimeEpisodesByReleaser,
-  getAnimeEpisodesByReleasers,
-} from "@/lib/nyaa/scrapper";
 import React, { Suspense } from "react";
 import Image from "next/image";
 import { InformationItem } from "@/components/information-item";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowBigDown,
-  ArrowBigUp,
-  ArrowUp,
+
   Download,
-  Magnet,
 } from "lucide-react";
-import { isToday, isYesterday } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { NYAA_BASE_URL, releasers } from "@/constants/consts";
 import EpisodesList from "./episodes-list";
 import LoadingInfinity from "@/components/loading-infinity";
 import Link from "next/link";
 import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
 import { Button } from "@/components/ui/button";
+import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
@@ -73,6 +48,8 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           <InformationItem type="Episodes" value={anime.data.episodes || "?"} />
 
           <InformationItem type="type" value={anime.data.type} />
+
+        {/* <EpisodeBroadcastCountDown broadcast={anime.data.broadcast} /> */}
         </div>
       </div>
 
