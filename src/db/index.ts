@@ -8,12 +8,14 @@
 // export const adapter = new DrizzleSQLiteAdapter(db, sessionTable, users);
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 
-
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import { sessionTable, userTable } from "./schema";
 const sql = neon(process.env.DRIZZLE_DATABASE_URL!);
 export const db = drizzle(sql);
 
-export const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
-
+export const adapter = new DrizzlePostgreSQLAdapter(
+  db,
+  sessionTable,
+  userTable
+);
