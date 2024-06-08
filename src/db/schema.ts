@@ -52,27 +52,25 @@ import { pgTable, timestamp } from "drizzle-orm/pg-core";
 //   expiresAt: integer("expires_at").notNull(),
 // });
 
-
-
 export const userTable = pgTable("user", {
-	id: serial("id").primaryKey(),
+  id: serial("id").primaryKey(),
   username: text("username").notNull(),
-	password: text("password").notNull(),
+  password: text("password").notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
-    mode: "date"
-  }).default(sql`CURRENT_TIMESTAMP`)
+    mode: "date",
+  }).default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const sessionTable = pgTable("session", {
-	id: text("id").primaryKey(),
-	userId: integer("user_id")
-		.notNull()
-		.references(() => userTable.id),
-	expiresAt: timestamp("expires_at", {
-		withTimezone: true,
-		mode: "date"
-	}).notNull()
+  id: text("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => userTable.id),
+  expiresAt: timestamp("expires_at", {
+    withTimezone: true,
+    mode: "date",
+  }).notNull(),
 });
 
 export const library = pgTable("library", {
@@ -89,6 +87,6 @@ export const library = pgTable("library", {
     .notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
-    mode: "date"
-  }).default(sql`CURRENT_TIMESTAMP`)
+    mode: "date",
+  }).default(sql`CURRENT_TIMESTAMP`),
 });

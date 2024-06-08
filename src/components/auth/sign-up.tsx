@@ -19,6 +19,7 @@ import { Button } from "../ui/button";
 import { signUp } from "@/lib/actions/authentication";
 
 const SignUp = () => {
+  const [isPending, startTransition] = React.useTransition();
   const form = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
@@ -28,10 +29,12 @@ const SignUp = () => {
     },
   });
   const onSubmit = async (data: z.infer<typeof signUpFormSchema>) => {
-    const result = await signUp(data);
-    if (result?.message) {
-      form.setError("root", { message: result.message });
-    }
+    startTransition(async () => {
+      const result = await signUp(data);
+      if (result?.message) {
+        form.setError("root", { message: result.message });
+      }
+    });
   };
   return (
     <div className="mt-3">
@@ -87,7 +90,9 @@ const SignUp = () => {
             )}
           />
           <FormRootError />
-          <Button type="submit">Sign Up</Button>
+          <Button loading={isPending} disabled={isPending} type="submit">
+            Sign Up
+          </Button>
           {/* {form.formState.errors.root && (
             <p>
               <span className="text-red-500">

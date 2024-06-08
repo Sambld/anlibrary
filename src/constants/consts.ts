@@ -11,9 +11,9 @@ export const weekDays = [
 ];
 
 export const releasers = [
-  "[HorribleSubs]",
-  "[Erai-raws]",
   "[SubsPlease]",
+  "[Erai-raws]",
+  "[HorribleSubs]",
   "[ASW]",
   "[EMBER]",
   "[Judas]",

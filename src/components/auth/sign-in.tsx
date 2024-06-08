@@ -17,8 +17,11 @@ import { signInFormSchema } from "@/lib/form-schema";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { signIn, signUp } from "@/lib/actions/authentication";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const SignIn = () => {
+  const [isPending, startTransition] = React.useTransition();
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
@@ -27,10 +30,12 @@ const SignIn = () => {
     },
   });
   const onSubmit = async (data: z.infer<typeof signInFormSchema>) => {
-    const response = await signIn(data);
-    if (response?.message) {
-      form.setError("root", { message: response.message });
-    }
+    startTransition(async () => {
+      const response = await signIn(data);
+      if (response?.message) {
+        form.setError("root", { message: response.message });
+      }
+    });
   };
   return (
     <div className="mt-3">
@@ -67,7 +72,9 @@ const SignIn = () => {
             )}
           />
           <FormRootError />
-          <Button type="submit">Login</Button>
+          <Button loading={isPending} disabled={isPending} type="submit">
+            Login
+          </Button>
         </form>
       </Form>
     </div>

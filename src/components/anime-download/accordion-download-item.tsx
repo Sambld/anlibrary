@@ -68,7 +68,7 @@ const AccordionDownloadItem = ({
               </TableHeader>
               <TableBody>
                 {items.map((batch) => (
-                  <TableRow key={batch.title}>
+                  <TableRow key={batch.title + batch.size}>
                     <TableCell className="max-sm:text-xs">
                       {batch.title}
                     </TableCell>

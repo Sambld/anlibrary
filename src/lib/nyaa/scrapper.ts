@@ -40,7 +40,6 @@ export const getAnimeEpisodesByReleaser = async ({
     const maxPages = 1;
     let episodes: NyaaEpisode[] = [];
     animeName = animeNameShaper(animeName);
-    console.log(animeName)
     for (let page = 1; page <= maxPages; page++) {
       const searchPage = await getAnimeSearchPageByReleaser({
         animeName,
@@ -68,8 +67,8 @@ export const getAnimeEpisodesByReleasers = async ({
   releasers,
 }: {
   animeName: {
-    english: string;
-    japanese: string;
+    default: string;
+    english?: string;
   };
   releasers: string[];
 }) => {
@@ -80,9 +79,8 @@ export const getAnimeEpisodesByReleasers = async ({
     for (const releaser of releasers) {
       let releaserEpisodes: NyaaEpisode[] = [];
 
-      for (let languageName of [animeName.english, animeName.japanese]) {
-        if (languageName){
-
+      for (let languageName of [animeName.default, animeName.english]) {
+        if (languageName) {
           const _releaserEpisodes = await getAnimeEpisodesByReleaser({
             animeName: languageName,
             releaser,
@@ -92,7 +90,7 @@ export const getAnimeEpisodesByReleasers = async ({
               ...releaserEpisodes,
               ..._releaserEpisodes,
             ]);
-  
+
             releaserEpisodes = Array.from(episodesSet);
             break;
           }
@@ -107,20 +105,35 @@ export const getAnimeEpisodesByReleasers = async ({
   }
 };
 
-export const getAnimeBatches = async ({animeTitle}: {animeTitle: {
-  english: string;
-  japanese: string;
-}}) => {
-
-  const shapedAnimeTitle = animeNameShaper(animeTitle.english);
-  const shapedAnimeTitleJapanese = animeNameShaper(animeTitle.japanese);
+export const getAnimeBatches = async ({
+  animeTitle,
+}: {
+  animeTitle: {
+    default: string;
+    english?: string;
+  };
+}) => {
+  const shapedAnimeTitle = animeNameShaper(animeTitle.default);
+  const shapedAnimeTitleJapanese =
+    animeTitle.english !== undefined
+      ? animeNameShaper(animeTitle.english)
+      : null;
   try {
-    const searchUrls = [
+    let searchUrls = [
       getNyaaSearchUrl(`${shapedAnimeTitle} BD`, "s=seeders&o=desc"),
       getNyaaSearchUrl(`${shapedAnimeTitle} Batch`, "s=seeders&o=desc"),
-      getNyaaSearchUrl(`${shapedAnimeTitleJapanese} BD`, "s=seeders&o=desc"),
-      getNyaaSearchUrl(`${shapedAnimeTitleJapanese} Batch`, "s=seeders&o=desc"),
     ];
+    if (shapedAnimeTitleJapanese) {
+      searchUrls.push(
+        getNyaaSearchUrl(`${shapedAnimeTitleJapanese} BD`, "s=seeders&o=desc")
+      );
+      searchUrls.push(
+        getNyaaSearchUrl(
+          `${shapedAnimeTitleJapanese} Batch`,
+          "s=seeders&o=desc"
+        )
+      );
+    }
 
     // Fetch both URLs in parallel
     const [responseBD, responseBatch] = await Promise.all(
@@ -145,11 +158,16 @@ export const getAnimeBatches = async ({animeTitle}: {animeTitle: {
     });
 
     // Combine the episodes and remove duplicates if necessary
-    const episodesSet = new Set<NyaaEpisode>([...episodesBD, ...episodesBatch]);
-    const episodes = Array.from(episodesSet);
+    const episodesSet = [...episodesBD, ...episodesBatch];
+
+    // remove duplicates
+    const episodes = episodesSet.filter((obj, index) => {
+      return index === episodesSet.findIndex((o) => obj.title === o.title);
+    });
 
     // sort episodes by seeders
-    return episodes.sort((a, b) => b.seeders - a.seeders);
+    const orderedEpisodes = episodes.sort((a, b) => b.seeders - a.seeders);
+    return orderedEpisodes;
   } catch (error) {
     console.error(error);
     throw error; // Re-throw error after logging

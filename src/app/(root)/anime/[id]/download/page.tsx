@@ -3,16 +3,14 @@ import React, { Suspense } from "react";
 import Image from "next/image";
 import { InformationItem } from "@/components/information-item";
 import { Badge } from "@/components/ui/badge";
-import {
-
-  Download,
-} from "lucide-react";
+import { Download } from "lucide-react";
 import EpisodesList from "./episodes-list";
 import LoadingInfinity from "@/components/loading-infinity";
 import Link from "next/link";
 import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
 import { Button } from "@/components/ui/button";
 import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
+import FavouriteReleasers from "@/components/anime-download/fav-releasers";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
@@ -49,7 +47,7 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
 
           <InformationItem type="type" value={anime.data.type} />
 
-        {/* <EpisodeBroadcastCountDown broadcast={anime.data.broadcast} /> */}
+          {/* <EpisodeBroadcastCountDown broadcast={anime.data.broadcast} /> */}
         </div>
       </div>
 

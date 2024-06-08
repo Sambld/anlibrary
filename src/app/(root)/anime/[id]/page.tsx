@@ -261,18 +261,15 @@ const AnimePage = async ({ params }: { params: { id: string } }) => {
           <Separator />
 
           {relations.map((relation) => (
-            <div key={relation.relation}>
-              <div
-                key={relation.relation + 1}
-                className="flex gap-4 items-start mt-5"
-              >
+            <div key={relation.relation + relation.entry}>
+              <div className="flex gap-4 items-start mt-5">
                 <span className="text-sm text-gray-500 min-w-[80px]">
                   {relation.relation}
                 </span>
                 <div className="flex flex-col gap-2">
                   {relation.entry.map((entry) => (
                     <Link
-                      key={relation.relation}
+                      key={entry.mal_id}
                       href={`/anime/${entry.mal_id}`}
                       className="text-xs"
                     >
