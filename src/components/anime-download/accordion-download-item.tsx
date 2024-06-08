@@ -1,6 +1,13 @@
+"use client";
 import { NYAA_BASE_URL } from "@/constants/consts";
 import { isToday, isYesterday } from "@/lib/utils";
-import { ArrowBigUp, ArrowBigDown, Download, Magnet } from "lucide-react";
+import {
+  ArrowBigUp,
+  ArrowBigDown,
+  Download,
+  Magnet,
+  Wand2,
+} from "lucide-react";
 import React from "react";
 import {
   AccordionItem,
@@ -19,17 +26,36 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import { NyaaEpisode } from "@/lib/nyaa/types";
+import { downloadSubtitles, spawnDownload } from "@/lib/download/actions";
+import { useToast } from "../ui/use-toast";
 
 type DownloadAccodionProps = {
   children: React.ReactNode;
   items: NyaaEpisode[];
   valueKey?: number;
+  animeId: number;
 };
 const AccordionDownloadItem = ({
   children,
   items,
+  animeId,
   valueKey = 0,
 }: DownloadAccodionProps) => {
+  const { toast } = useToast();
+  const handleLocalDownload = async (animeId: number, magnet: string) => {
+    const response = await spawnDownload({
+      animeId,
+      magnet,
+    });
+    if (response) {
+      toast({
+        title: "Message from server",
+        description: response.message,
+        duration: 1000,
+      });
+    }
+  };
+
   return (
     <AccordionItem value={`item-${valueKey}`} className="mb-3">
       {children}
@@ -113,6 +139,15 @@ const AccordionDownloadItem = ({
                             className="fill-blue-600"
                           />
                         </a>
+
+                        <Wand2
+                          onClick={() =>
+                            handleLocalDownload(animeId, batch.magnet)
+                          }
+                          stroke="none"
+                          size={20}
+                          className="fill-blue-600 cursor-pointer"
+                        />
                       </div>
                     </TableCell>
                   </TableRow>

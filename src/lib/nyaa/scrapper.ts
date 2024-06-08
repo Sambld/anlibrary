@@ -18,7 +18,7 @@ export const getAnimeSearchPageByReleaser = async ({
 }) => {
   try {
     const searchUrl = getNyaaSearchUrl(`${releaser} ${animeName}`);
-    console.log(searchUrl);
+    // console.log(searchUrl);
     const response = await fetch(searchUrl, { next: { revalidate: 360 } });
     const html = await response.text();
     const $ = cheerio.load(html);
@@ -40,7 +40,7 @@ export const getAnimeEpisodesByReleaser = async ({
     const maxPages = 1;
     let episodes: NyaaEpisode[] = [];
     animeName = animeNameShaper(animeName);
-    console.log(animeName)
+    // console.log(animeName);
     for (let page = 1; page <= maxPages; page++) {
       const searchPage = await getAnimeSearchPageByReleaser({
         animeName,
@@ -81,8 +81,7 @@ export const getAnimeEpisodesByReleasers = async ({
       let releaserEpisodes: NyaaEpisode[] = [];
 
       for (let languageName of [animeName.english, animeName.japanese]) {
-        if (languageName){
-
+        if (languageName) {
           const _releaserEpisodes = await getAnimeEpisodesByReleaser({
             animeName: languageName,
             releaser,
@@ -92,7 +91,7 @@ export const getAnimeEpisodesByReleasers = async ({
               ...releaserEpisodes,
               ..._releaserEpisodes,
             ]);
-  
+
             releaserEpisodes = Array.from(episodesSet);
             break;
           }
@@ -107,11 +106,14 @@ export const getAnimeEpisodesByReleasers = async ({
   }
 };
 
-export const getAnimeBatches = async ({animeTitle}: {animeTitle: {
-  english: string;
-  japanese: string;
-}}) => {
-
+export const getAnimeBatches = async ({
+  animeTitle,
+}: {
+  animeTitle: {
+    english: string;
+    japanese: string;
+  };
+}) => {
   const shapedAnimeTitle = animeNameShaper(animeTitle.english);
   const shapedAnimeTitleJapanese = animeNameShaper(animeTitle.japanese);
   try {

@@ -3,20 +3,19 @@ import React, { Suspense } from "react";
 import Image from "next/image";
 import { InformationItem } from "@/components/information-item";
 import { Badge } from "@/components/ui/badge";
-import {
-
-  Download,
-} from "lucide-react";
+import { Download } from "lucide-react";
 import EpisodesList from "./episodes-list";
 import LoadingInfinity from "@/components/loading-infinity";
 import Link from "next/link";
 import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
 import { Button } from "@/components/ui/button";
 import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
+import OpenDownloadFolder from "@/components/anime-download/open-download-folder";
+import { getAnimeFromLibrary, isAnimeInLibrary } from "@/lib/library";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
-
+  const animeInLibrary = await getAnimeFromLibrary(parseInt(params.id));
   return (
     <div className="max-sm:p-5 p-10 mb-12 ">
       <div className="flex gap-5 max-sm:flex-col">
@@ -49,7 +48,7 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
 
           <InformationItem type="type" value={anime.data.type} />
 
-        {/* <EpisodeBroadcastCountDown broadcast={anime.data.broadcast} /> */}
+          {/* <EpisodeBroadcastCountDown broadcast={anime.data.broadcast} /> */}
         </div>
       </div>
 
@@ -60,18 +59,30 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           title_english={anime.data.title_english}
           title_synonyms={[]}
         />
-        <a
-          href={`https://subdl.com/search?query=${anime.data.title}`}
-          target="_blank"
-        >
-          <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
-            <Download size={24} className="mr-2" />
-            Download Subtitles
-          </Button>
-        </a>
+        {!animeInLibrary && (
+          <a
+            href={`https://subdl.com/search?query=${anime.data.title}`}
+            target="_blank"
+          >
+            <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
+              <Download size={24} className="mr-2" />
+              Download Subtitles
+            </Button>
+          </a>
+        )}
+        {animeInLibrary && (
+          <a href={animeInLibrary.anime?.subtitlesLink} target="_blank">
+            <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
+              <Download size={24} className="mr-2" />
+              Download Subtitles
+            </Button>
+          </a>
+        )}
+        <OpenDownloadFolder title={anime.data.title} />
       </div>
       <Suspense fallback={<LoadingInfinity />}>
         <EpisodesList
+          animeId={anime.data.mal_id}
           animeTitle={anime.data.title}
           englishTitle={anime.data.title_english}
           airing={anime.data.airing}

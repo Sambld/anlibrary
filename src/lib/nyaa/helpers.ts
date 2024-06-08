@@ -43,7 +43,6 @@ export const getEpisodes = ({
     const leechers = parseInt(item.find("td:nth-child(7)").text().trim(), 10);
 
     if (filters?.onlyActive && seeders === 0) {
-      console.log("skipping", title);
       return;
     }
 

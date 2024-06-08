@@ -1,7 +1,6 @@
 import { weekDays } from "@/constants/consts";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -133,7 +132,7 @@ export const animeNameShaper = (name: string) => {
   // remove the season part from the anime name
 
   // Example: "Attack on Titan 4th Season Part X" => "Attack on Titan 4th Season"
-  const newName =  name.replace(
+  const newName = name.replace(
     /(\d+)(st|nd|rd|th) Season|Season (\d+)/,
     (match, p1, p2, p3) => {
       if (p3) {
@@ -143,7 +142,7 @@ export const animeNameShaper = (name: string) => {
       }
     }
   );
-  return newName
+  return newName;
 };
 
 export const convertToUTCTimeZone = ({
@@ -173,13 +172,10 @@ export const convertToUTCTimeZone = ({
   // Get the next occurrence of the specified day
   const nextDay = getNextDayOfWeek(dayOfWeek);
 
-  console.log("next day", nextDay);
-
   // Combine the date with the provided time
   const [hours, minutes] = time.split(":").map(Number);
 
   nextDay.setUTCHours(hours, minutes);
-
 
   let timeInMilliseconds = nextDay.getTime();
 

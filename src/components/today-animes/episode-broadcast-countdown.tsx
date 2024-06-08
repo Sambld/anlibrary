@@ -1,6 +1,10 @@
 "use client";
 import { Broadcast } from "@/lib/jikan_api/types";
-import { getNextBroadcastDate, getDateDifference, convertToUTCTimeZone } from "@/lib/utils";
+import {
+  getNextBroadcastDate,
+  getDateDifference,
+  convertToUTCTimeZone,
+} from "@/lib/utils";
 import React, { useState, useEffect, useCallback } from "react";
 
 type EpisodeBroadcastCountDownProps = {
@@ -11,7 +15,7 @@ type EpisodeBroadcastCountDownProps = {
 };
 
 const EpisodeBroadcastCountDown = ({
-  broadcast
+  broadcast,
 }: EpisodeBroadcastCountDownProps) => {
   const [timeDiff, setTimeDiff] = useState({
     days: 0,
@@ -36,13 +40,12 @@ const EpisodeBroadcastCountDown = ({
 
     // console.log('now : ', now);
     // console.log("date : ", date);
-    
+
     // console.log(date)
     const { days, hours, minutes, seconds } = getDateDifference(
       nowInAsiaTokyo,
       nextBroadcastInAsiaTokyo
     );
-  console.log(days, hours, minutes, seconds);
 
     setTimeDiff({ days, hours, minutes, seconds });
   }, [broadcast.day, broadcast.time]);

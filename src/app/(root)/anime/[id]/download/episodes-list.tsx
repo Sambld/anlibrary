@@ -1,7 +1,4 @@
-import {
-  Accordion,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionTrigger } from "@/components/ui/accordion";
 import {
   getAnimeBatches,
   getAnimeEpisodesByReleaser,
@@ -14,20 +11,20 @@ import AccordionDownloadItem from "@/components/anime-download/accordion-downloa
 import { NyaaEpisode } from "@/lib/nyaa/types";
 
 type EpisodesListProps = {
+  animeId: number;
   animeTitle: string;
   englishTitle: string;
   airing: boolean;
 };
 
 const EpisodesList = async ({
+  animeId,
   animeTitle,
   englishTitle,
   airing,
 }: EpisodesListProps) => {
-  let releasersEpisodes: { [key: string]: NyaaEpisode[] } | null =
-    null;
+  let releasersEpisodes: { [key: string]: NyaaEpisode[] } | null = null;
   if (airing) {
-    
     releasersEpisodes = await getAnimeEpisodesByReleasers({
       animeName: {
         english: englishTitle,
@@ -37,14 +34,15 @@ const EpisodesList = async ({
     });
   }
 
-  console.log(animeTitle);
+  // console.log(animeTitle);
   let batches: NyaaEpisode[] = [];
   if (!airing) {
-   batches = await getAnimeBatches({animeTitle : {
-    english: englishTitle,
-    japanese: animeTitle,
-
-  }});
+    batches = await getAnimeBatches({
+      animeTitle: {
+        english: englishTitle,
+        japanese: animeTitle,
+      },
+    });
   }
   const releaserKeys = releasersEpisodes ? Object.keys(releasersEpisodes) : [];
   return (
@@ -61,7 +59,7 @@ const EpisodesList = async ({
       <Accordion type="single" collapsible className="max-w-full mt-10">
         {batches && batches.length > 0 && (
           <>
-            <AccordionDownloadItem items={batches}>
+            <AccordionDownloadItem animeId={animeId} items={batches}>
               <AccordionTrigger className="bg-crimson  px-4">
                 <span className="text-white text-sm">
                   Batches & BDs
@@ -78,6 +76,7 @@ const EpisodesList = async ({
               releasersEpisodes[releaser] &&
               releasersEpisodes[releaser].length > 0 && (
                 <AccordionDownloadItem
+                  animeId={animeId}
                   items={releasersEpisodes[releaser]}
                   valueKey={index + 1}
                 >
