@@ -13,6 +13,8 @@ import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadca
 import OpenDownloadFolder from "@/components/anime-download/open-download-folder";
 import { getAnimeFromLibrary, isAnimeInLibrary } from "@/lib/library";
 
+export const dynamic = "force-dynamic";
+
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
   const animeInLibrary = await getAnimeFromLibrary(parseInt(params.id));

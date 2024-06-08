@@ -3,6 +3,7 @@ import { getAnimeScheduleByDay } from "@/lib/jikan_api/api";
 import React from "react";
 import AnimeCardHorizontal from "@/components/today-animes/anime-card-horizontal";
 
+export const dynamic = "force-dynamic";
 const TodayAnimes = async () => {
   const today = weekDays[new Date().getDay()];
 
