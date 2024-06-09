@@ -9,16 +9,16 @@ const OpenDownloadFolder = ({ title }: { title: string }) => {
     await openFolder(title);
   };
 
-  const handleSubtitlesDownload = async () => {
-    const response = await downloadSubtitles(
-      "https://subdl.com/subtitle/sd1300013/that-time-i-got-reincarnated-as-a-slime/third-season/arabic"
-    );
-  };
+  // const handleSubtitlesDownload = async () => {
+  //   const response = await downloadSubtitles(
+  //     "https://subdl.com/subtitle/sd1300013/that-time-i-got-reincarnated-as-a-slime/third-season/arabic"
+  //   );
+  // };
   return (
     <div>
       <Button
         // onClick={handleOpenFolder}
-        onClick={handleSubtitlesDownload}
+        onClick={handleOpenFolder}
         className="bg-yellow-400 hover:bg-yellow-300 text-black "
       >
         <Folder size={24} />

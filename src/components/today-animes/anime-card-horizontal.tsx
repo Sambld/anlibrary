@@ -4,7 +4,7 @@ import React from "react";
 import EpisodeBroadcastCountDown from "./episode-broadcast-countdown";
 import { Button } from "../ui/button";
 import DownloadButton from "../download-button";
-type AnimeCardHorizontalProps = {
+type AnimeCardHProps = {
   mal_id: number;
   title: string;
   episodes: number | "?";
@@ -17,14 +17,14 @@ type AnimeCardHorizontalProps = {
     string?: string;
   };
 };
-const AnimeCardHorizontal = ({
+const AnimeCardH = ({
   mal_id,
   title,
   episodes,
   image,
   duration,
   broadcast,
-}: AnimeCardHorizontalProps) => {
+}: AnimeCardHProps) => {
   return (
     <div>
       <div className=" min-h-[220px] w-[480px] max-sm:w-full flex max-sm:flex-col dark:bg-zinc-900 bg-slate-100 rounded-lg">
@@ -66,4 +66,4 @@ const AnimeCardHorizontal = ({
   );
 };
 
-export default AnimeCardHorizontal;
+export default AnimeCardH;

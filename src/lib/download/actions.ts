@@ -20,7 +20,11 @@ export const spawnDownload = async ({
   const sanitizedAnimeId = animeId.toString().replaceAll(/[^a-zA-Z0-9]/g, "");
 
   // Sanitize magnet link
-  const sanitizedMagnet = magnet.replaceAll(/[^a-zA-Z0-9:?=\/&-]/g, "");
+  if (!magnet.match(/magnet:\?xt=urn:[a-z0-9]+:[a-z0-9]{32}/i)) {
+    return {
+      message: "Magnet URI not valid",
+    };
+  }
 
   const anime = await db
     .select()
@@ -35,14 +39,14 @@ export const spawnDownload = async ({
     // Sanitize title
     const sanitizedTitle = title.replace(/[^a-zA-Z0-9\s\-_]/g, "");
 
-    return spawnAria2c(sanitizedMagnet, sanitizedTitle);
+    return spawnAria2c(magnet, sanitizedTitle);
   } else {
     const animeEntry = anime[0];
 
     // Sanitize title
     const sanitizedTitle = animeEntry.title.replace(/[^a-zA-Z0-9\s\-_]/g, "");
 
-    return spawnAria2c(sanitizedMagnet, sanitizedTitle);
+    return spawnAria2c(magnet, sanitizedTitle);
   }
 };
 
@@ -104,6 +108,7 @@ export const downloadSubtitles = async (subtitlesLink: string) => {
         subtitlesLink = subtitlesLink + "/arabic";
       }
     }
+    console.log("Downloading subtitles from:", subtitlesLink);
     const subtitlePage = await fetch(subtitlesLink);
     const subtitleHtml = await subtitlePage.text();
     const $ = cheerio.load(subtitleHtml);
@@ -120,6 +125,7 @@ export const downloadSubtitles = async (subtitlesLink: string) => {
     });
 
     // download the last link
+    return downloadLinks[downloadLinks.length - 1];
     const lastLink = downloadLinks[downloadLinks.length - 1];
     if (lastLink) {
     }

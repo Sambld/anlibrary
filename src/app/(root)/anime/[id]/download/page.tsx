@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
 import OpenDownloadFolder from "@/components/anime-download/open-download-folder";
 import { getAnimeFromLibrary, isAnimeInLibrary } from "@/lib/library";
+import DownlaodSubtitles from "@/components/anime-download/download-subtitles";
 
 export const dynamic = "force-dynamic";
 
@@ -81,6 +82,7 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           </a>
         )}
         <OpenDownloadFolder title={anime.data.title} />
+        <DownlaodSubtitles />
       </div>
       <Suspense fallback={<LoadingInfinity />}>
         <EpisodesList

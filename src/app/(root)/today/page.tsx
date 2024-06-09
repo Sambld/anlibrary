@@ -1,7 +1,7 @@
 import { weekDays } from "@/constants/consts";
 import { getAnimeScheduleByDay } from "@/lib/jikan_api/api";
 import React from "react";
-import AnimeCardHorizontal from "@/components/today-animes/anime-card-horizontal";
+import AnimeCardH from "@/components/today-animes/anime-card-horizontal";
 
 export const dynamic = "force-dynamic";
 const TodayAnimes = async () => {
@@ -15,7 +15,7 @@ const TodayAnimes = async () => {
 
       <div className="flex flex-wrap gap-3 max-sm:flex-col max-sm:gap-1">
         {todayanimes.data.map((anime) => (
-          <AnimeCardHorizontal
+          <AnimeCardH
             key={anime.mal_id}
             mal_id={anime.mal_id}
             title={anime.title}

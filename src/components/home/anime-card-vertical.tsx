@@ -11,7 +11,7 @@ type AnimeCardProps = {
 const AnimeCard = ({ mal_id, title, episodes, image }: AnimeCardProps) => {
   return (
     <Link href={`/anime/${mal_id}`}>
-      <div className="w-[165px] min-h-[280px] max-sm:w-[150px]  dark:bg-zinc-900 bg-slate-100 rounded-lg">
+      <div className="w-[165px] min-h-[280px] max-sm:w-[150px]  dark:bg-zinc-900 bg-slate-100 rounded-lg transition hover:scale-[97%] duration-200">
         {/* <div className="w-[220px] min-h-[310px] max-sm:w-[150px]  dark:bg-zinc-900 bg-slate-100 rounded-lg"> */}
         <div className="relative w-full h-[200px] ">
           <Image
