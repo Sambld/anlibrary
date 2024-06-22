@@ -4,16 +4,11 @@ import { Button } from "../ui/button";
 import { Folder } from "lucide-react";
 import { downloadSubtitles, openFolder } from "@/lib/download/actions";
 
-const OpenDownloadFolder = ({ title }: { title: string }) => {
+const OpenDownloadFolder = ({ id }: { id: number }) => {
   const handleOpenFolder = async () => {
-    await openFolder(title);
+    await openFolder(id);
   };
 
-  // const handleSubtitlesDownload = async () => {
-  //   const response = await downloadSubtitles(
-  //     "https://subdl.com/subtitle/sd1300013/that-time-i-got-reincarnated-as-a-slime/third-season/arabic"
-  //   );
-  // };
   return (
     <div>
       <Button

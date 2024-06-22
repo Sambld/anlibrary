@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
 import OpenDownloadFolder from "@/components/anime-download/open-download-folder";
 import { getAnimeFromLibrary, isAnimeInLibrary } from "@/lib/library";
-import DownlaodSubtitles from "@/components/anime-download/download-subtitles";
 
 export const dynamic = "force-dynamic";
 
@@ -62,9 +61,12 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           title_english={anime.data.title_english}
           title_synonyms={[]}
         />
-        {!animeInLibrary && (
+        {
           <a
-            href={`https://subdl.com/search?query=${anime.data.title}`}
+            href={
+              animeInLibrary?.anime?.subtitlesLink ||
+              `https://subdl.com/search?query=${anime.data.title}`
+            }
             target="_blank"
           >
             <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
@@ -72,17 +74,8 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
               Download Subtitles
             </Button>
           </a>
-        )}
-        {animeInLibrary && (
-          <a href={animeInLibrary.anime?.subtitlesLink} target="_blank">
-            <Button className="bg-yellow-400 hover:bg-yellow-300 text-black ">
-              <Download size={24} className="mr-2" />
-              Download Subtitles
-            </Button>
-          </a>
-        )}
-        <OpenDownloadFolder title={anime.data.title} />
-        <DownlaodSubtitles />
+        }
+        <OpenDownloadFolder id={anime.data.mal_id} />
       </div>
       <Suspense fallback={<LoadingInfinity />}>
         <EpisodesList

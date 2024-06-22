@@ -39,14 +39,16 @@ export const spawnDownload = async ({
     // Sanitize title
     const sanitizedTitle = title.replace(/[^a-zA-Z0-9\s\-_]/g, "");
 
-    return spawnAria2c(magnet, sanitizedTitle);
+    // return spawnAria2c(magnet, sanitizedTitle);
+    return addQbitTorrent(magnet, sanitizedTitle);
   } else {
     const animeEntry = anime[0];
 
     // Sanitize title
     const sanitizedTitle = animeEntry.title.replace(/[^a-zA-Z0-9\s\-_]/g, "");
 
-    return spawnAria2c(magnet, sanitizedTitle);
+    // return spawnAria2c(magnet, sanitizedTitle);
+    return addQbitTorrent(magnet, sanitizedTitle);
   }
 };
 
@@ -62,9 +64,17 @@ export const isValidPath = (path: string) => {
   }
 };
 
-export const openFolder = async (animeTitle: string) => {
-  const sanitizedTitle = animeTitle.replace(/[^a-zA-Z0-9\s\-_]/g, "");
-  const fullPath = `${process.env.BASE_DOWNLOAD_PATH}${sanitizedTitle}`.replace(
+export const openFolder = async (id: number) => {
+  const anime = await db
+    .select()
+    .from(library)
+    .where(eq(library.animeId, id))
+    .execute();
+  if (anime.length === 0) {
+    return { message: "Anime not found" };
+  }
+  const title = anime[0].title;
+  const fullPath = `${process.env.BASE_DOWNLOAD_PATH}${title}`.replace(
     /\//g,
     "\\"
   );
@@ -85,6 +95,34 @@ const spawnAria2c = async (magnet: string, animeTitle: string) => {
 
     exec(
       `start aria2c.exe -d "${fullAnimePath}" "${magnet}" --max-upload-limit=5K --seed-time=0 --bt-prioritize-piece=head=100M,tail=20M`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`error: ${error}`);
+          return;
+        }
+      }
+    );
+
+    return { message: "Download started" };
+  } catch (error) {
+    return { message: "Failed to spawn download " + error };
+  }
+};
+
+export const addQbitTorrent = async (magnet: string, animeTitle: string) => {
+  try {
+    if (!isValidPath(process.env.BASE_DOWNLOAD_PATH!)) {
+      return { message: "Invalid download path" };
+    }
+
+    const fullAnimePath = `${process.env.BASE_DOWNLOAD_PATH}${animeTitle}`;
+
+    if (!existsSync(fullAnimePath)) {
+      mkdirSync(fullAnimePath);
+    }
+
+    exec(
+      `"C:\\Program Files\\qBittorrent\\qbittorrent.exe" --save-path="${fullAnimePath}" --sequential --first-and-last --skip-dialog=true "${magnet}"`,
       (error, stdout, stderr) => {
         if (error) {
           console.error(`error: ${error}`);

@@ -23,7 +23,7 @@ export const getEpisodes = ({
 }: {
   $: cheerio.CheerioAPI;
   filters?: {
-    onlyActive: boolean;
+    activeOnly: boolean;
   };
 }): NyaaEpisode[] => {
   const items = $(".torrent-list tbody tr");
@@ -42,7 +42,7 @@ export const getEpisodes = ({
     const seeders = parseInt(item.find("td:nth-child(6)").text().trim(), 10);
     const leechers = parseInt(item.find("td:nth-child(7)").text().trim(), 10);
 
-    if (filters?.onlyActive && seeders === 0) {
+    if (filters?.activeOnly && seeders === 0) {
       return;
     }
 

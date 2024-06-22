@@ -18,8 +18,8 @@ export const getAnimeSearchPageByReleaser = async ({
 }) => {
   try {
     const searchUrl = getNyaaSearchUrl(`${releaser} ${animeName}`);
-    // console.log(searchUrl);
-    const response = await fetch(searchUrl, { next: { revalidate: 360 } });
+    console.log(searchUrl);
+    const response = await fetch(searchUrl, { cache: "no-store" });
     const html = await response.text();
     const $ = cheerio.load(html);
     return $;
@@ -97,7 +97,7 @@ export const getAnimeEpisodesByReleasers = async ({
           }
         }
       }
-      episodes[releaser] = releaserEpisodes;
+      if (releaserEpisodes.length > 0) episodes[releaser] = releaserEpisodes;
     }
     return episodes;
   } catch (error) {
@@ -140,10 +140,10 @@ export const getAnimeBatches = async ({
     const $Batch = cheerio.load(htmlBatch);
 
     // Get episodes from both responses
-    const episodesBD = getEpisodes({ $: $BD, filters: { onlyActive: true } });
+    const episodesBD = getEpisodes({ $: $BD, filters: { activeOnly: true } });
     const episodesBatch = getEpisodes({
       $: $Batch,
-      filters: { onlyActive: true },
+      filters: { activeOnly: true },
     });
 
     // Combine the episodes and remove duplicates if necessary

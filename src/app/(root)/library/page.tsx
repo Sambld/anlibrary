@@ -36,6 +36,7 @@ const Library = async () => {
             <div className="flex flex-wrap gap-4 mt-6">
               {airingToday.map((anime) => (
                 <AnimeCard
+                  download={true}
                   key={anime.animeId}
                   episodes={anime.episodes}
                   image={anime.image}

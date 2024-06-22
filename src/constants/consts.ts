@@ -10,13 +10,15 @@ export const weekDays = [
   "saturday",
 ];
 
-export const releasers = [
-  "[HorribleSubs]",
-  "[Erai-raws]",
-  "[SubsPlease]",
-  "[ASW]",
-  "[EMBER]",
-  "[Judas]",
-  "[Anime Time]",
-  "[DKB]",
-];
+// export const releasers = [
+// "[HorribleSubs]",
+// "[Erai-raws]",
+// "[SubsPlease]",
+//   "[ASW]",
+// "[EMBER]",
+//   "[Judas]",
+//   "[Anime Time]",
+//   "[DKB]",
+// ];
+
+export const releasers = process.env.RELEASERS?.split(",") || ["[ASW]"];

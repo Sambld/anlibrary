@@ -6,14 +6,10 @@ import {
   ArrowBigDown,
   Download,
   Magnet,
-  Wand2,
+  MonitorDownIcon,
 } from "lucide-react";
 import React from "react";
-import {
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "../ui/accordion";
+import { AccordionItem, AccordionContent } from "../ui/accordion";
 import { ScrollArea } from "../ui/scroll-area";
 import {
   Table,
@@ -26,8 +22,14 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import { NyaaEpisode } from "@/lib/nyaa/types";
-import { downloadSubtitles, spawnDownload } from "@/lib/download/actions";
+import { spawnDownload } from "@/lib/download/actions";
 import { useToast } from "../ui/use-toast";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "../ui/tooltip";
 
 type DownloadAccodionProps = {
   children: React.ReactNode;
@@ -122,32 +124,35 @@ const AccordionDownloadItem = ({
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1 max-sm:flex-col">
-                        <a
-                          href={`${NYAA_BASE_URL}${batch.torrentFile}`}
-                          className="text-blue-600"
-                        >
+                        <a href={`${NYAA_BASE_URL}${batch.torrentFile}`}>
                           <Download
-                            stroke="none"
                             size={20}
-                            className="fill-blue-600"
+                            className="text-blue-600 cursor-pointer"
                           />
                         </a>
-                        <a href={batch.magnet} className="text-blue-600">
+                        <a href={batch.magnet}>
                           <Magnet
-                            stroke="none"
                             size={20}
-                            className="fill-blue-600"
+                            className="text-blue-600 cursor-pointer"
                           />
                         </a>
 
-                        <Wand2
-                          onClick={() =>
-                            handleLocalDownload(animeId, batch.magnet)
-                          }
-                          stroke="none"
-                          size={20}
-                          className="fill-blue-600 cursor-pointer"
-                        />
+                        <TooltipProvider delayDuration={100}>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <MonitorDownIcon
+                                onClick={() =>
+                                  handleLocalDownload(animeId, batch.magnet)
+                                }
+                                size={20}
+                                className="cursor-pointer text-blue-600"
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Spawn Qbittorrent download </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </TableCell>
                   </TableRow>

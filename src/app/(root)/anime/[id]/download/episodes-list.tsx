@@ -10,6 +10,8 @@ import { releasers } from "@/constants/consts";
 import AccordionDownloadItem from "@/components/anime-download/accordion-download-item";
 import { NyaaEpisode } from "@/lib/nyaa/types";
 
+export const dynamic = "force-dynamic";
+
 type EpisodesListProps = {
   animeId: number;
   animeTitle: string;
@@ -24,6 +26,7 @@ const EpisodesList = async ({
   airing,
 }: EpisodesListProps) => {
   let releasersEpisodes: { [key: string]: NyaaEpisode[] } | null = null;
+  let batches: NyaaEpisode[] = [];
   if (airing) {
     releasersEpisodes = await getAnimeEpisodesByReleasers({
       animeName: {
@@ -32,11 +35,7 @@ const EpisodesList = async ({
       },
       releasers: releasers,
     });
-  }
-
-  // console.log(animeTitle);
-  let batches: NyaaEpisode[] = [];
-  if (!airing) {
+  } else {
     batches = await getAnimeBatches({
       animeTitle: {
         english: englishTitle,
@@ -45,6 +44,9 @@ const EpisodesList = async ({
     });
   }
   const releaserKeys = releasersEpisodes ? Object.keys(releasersEpisodes) : [];
+
+  console.log(releasersEpisodes, batches);
+
   return (
     <>
       {releaserKeys.length === 0 && batches.length === 0 && (
