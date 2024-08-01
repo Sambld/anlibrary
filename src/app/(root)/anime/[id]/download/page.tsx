@@ -12,12 +12,13 @@ import { Button } from "@/components/ui/button";
 import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
 import OpenDownloadFolder from "@/components/anime-download/open-download-folder";
 import { getAnimeFromLibrary, isAnimeInLibrary } from "@/lib/library";
+import SetReleaseDay from "@/components/anime-download/set-anime-release-day";
 
 export const dynamic = "force-dynamic";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
-  const animeInLibrary = await getAnimeFromLibrary(parseInt(params.id));
+  const animeFromLibrary = await getAnimeFromLibrary(parseInt(params.id));
   return (
     <div className="max-sm:p-5 p-10 mb-12 ">
       <div className="flex gap-5 max-sm:flex-col">
@@ -64,7 +65,7 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
         {
           <a
             href={
-              animeInLibrary?.anime?.subtitlesLink ||
+              animeFromLibrary?.anime?.subtitlesLink ||
               `https://subdl.com/search?query=${anime.data.title}`
             }
             target="_blank"
@@ -76,6 +77,13 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           </a>
         }
         <OpenDownloadFolder id={anime.data.mal_id} />
+
+        {animeFromLibrary && (
+          <SetReleaseDay
+            defaultDay={animeFromLibrary?.anime?.broadcastDay}
+            animeId={anime.data.mal_id}
+          />
+        )}
       </div>
       <Suspense fallback={<LoadingInfinity />}>
         <EpisodesList

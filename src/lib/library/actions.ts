@@ -58,8 +58,6 @@ export const toggleAnime = async ({
       isInLibrary: true,
     };
   } catch (error) {
-    console.log(error);
-
     return {
       error: "Failed to toggle anime",
     };

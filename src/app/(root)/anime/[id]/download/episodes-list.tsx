@@ -45,7 +45,7 @@ const EpisodesList = async ({
   }
   const releaserKeys = releasersEpisodes ? Object.keys(releasersEpisodes) : [];
 
-  console.log(releasersEpisodes, batches);
+  // console.log(releasersEpisodes, batches);
 
   return (
     <>

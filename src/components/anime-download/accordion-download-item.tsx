@@ -22,7 +22,6 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import { NyaaEpisode } from "@/lib/nyaa/types";
-import { spawnDownload } from "@/lib/download/actions";
 import { useToast } from "../ui/use-toast";
 import {
   TooltipProvider,
@@ -30,6 +29,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "../ui/tooltip";
+import TorrentDownloader from "./add-new-torrent-download";
 
 type DownloadAccodionProps = {
   children: React.ReactNode;
@@ -43,21 +43,6 @@ const AccordionDownloadItem = ({
   animeId,
   valueKey = 0,
 }: DownloadAccodionProps) => {
-  const { toast } = useToast();
-  const handleLocalDownload = async (animeId: number, magnet: string) => {
-    const response = await spawnDownload({
-      animeId,
-      magnet,
-    });
-    if (response) {
-      toast({
-        title: "Message from server",
-        description: response.message,
-        duration: 1000,
-      });
-    }
-  };
-
   return (
     <AccordionItem value={`item-${valueKey}`} className="mb-3">
       {children}
@@ -140,12 +125,9 @@ const AccordionDownloadItem = ({
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
                             <TooltipTrigger>
-                              <MonitorDownIcon
-                                onClick={() =>
-                                  handleLocalDownload(animeId, batch.magnet)
-                                }
-                                size={20}
-                                className="cursor-pointer text-blue-600"
+                              <TorrentDownloader
+                                magnetUrl={batch.magnet}
+                                animeId={animeId}
                               />
                             </TooltipTrigger>
                             <TooltipContent>

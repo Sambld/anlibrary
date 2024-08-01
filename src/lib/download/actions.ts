@@ -8,50 +8,6 @@ import { exec } from "child_process";
 import { getFullAnimeById } from "../jikan_api/api";
 import * as cheerio from "cheerio";
 
-type SpawnDownloadProps = {
-  animeId: number;
-  magnet: string;
-};
-export const spawnDownload = async ({
-  animeId,
-  magnet,
-}: SpawnDownloadProps) => {
-  // Sanitize animeId
-  const sanitizedAnimeId = animeId.toString().replaceAll(/[^a-zA-Z0-9]/g, "");
-
-  // Sanitize magnet link
-  if (!magnet.match(/magnet:\?xt=urn:[a-z0-9]+:[a-z0-9]{32}/i)) {
-    return {
-      message: "Magnet URI not valid",
-    };
-  }
-
-  const anime = await db
-    .select()
-    .from(library)
-    .where(eq(library.animeId, parseInt(sanitizedAnimeId)))
-    .execute();
-
-  if (anime.length === 0) {
-    const fetchedAnime = await getFullAnimeById(sanitizedAnimeId);
-    const { title } = fetchedAnime.data;
-
-    // Sanitize title
-    const sanitizedTitle = title.replace(/[^a-zA-Z0-9\s\-_]/g, "");
-
-    // return spawnAria2c(magnet, sanitizedTitle);
-    return addQbitTorrent(magnet, sanitizedTitle);
-  } else {
-    const animeEntry = anime[0];
-
-    // Sanitize title
-    const sanitizedTitle = animeEntry.title.replace(/[^a-zA-Z0-9\s\-_]/g, "");
-
-    // return spawnAria2c(magnet, sanitizedTitle);
-    return addQbitTorrent(magnet, sanitizedTitle);
-  }
-};
-
 export const isValidPath = (path: string) => {
   // check if the path is valid on the file system
   try {
@@ -73,68 +29,13 @@ export const openFolder = async (id: number) => {
   if (anime.length === 0) {
     return { message: "Anime not found" };
   }
-  const title = anime[0].title;
+  let title = anime[0].title;
+  title = sanitizeFolderName(title);
   const fullPath = `${process.env.BASE_DOWNLOAD_PATH}${title}`.replace(
     /\//g,
     "\\"
   );
   exec(`start explorer.exe "${fullPath}"`);
-};
-
-const spawnAria2c = async (magnet: string, animeTitle: string) => {
-  try {
-    if (!isValidPath(process.env.BASE_DOWNLOAD_PATH!)) {
-      return { message: "Invalid download path" };
-    }
-
-    const fullAnimePath = `${process.env.BASE_DOWNLOAD_PATH}${animeTitle}`;
-
-    if (!existsSync(fullAnimePath)) {
-      mkdirSync(fullAnimePath);
-    }
-
-    exec(
-      `start aria2c.exe -d "${fullAnimePath}" "${magnet}" --max-upload-limit=5K --seed-time=0 --bt-prioritize-piece=head=100M,tail=20M`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(`error: ${error}`);
-          return;
-        }
-      }
-    );
-
-    return { message: "Download started" };
-  } catch (error) {
-    return { message: "Failed to spawn download " + error };
-  }
-};
-
-export const addQbitTorrent = async (magnet: string, animeTitle: string) => {
-  try {
-    if (!isValidPath(process.env.BASE_DOWNLOAD_PATH!)) {
-      return { message: "Invalid download path" };
-    }
-
-    const fullAnimePath = `${process.env.BASE_DOWNLOAD_PATH}${animeTitle}`;
-
-    if (!existsSync(fullAnimePath)) {
-      mkdirSync(fullAnimePath);
-    }
-
-    exec(
-      `"C:\\Program Files\\qBittorrent\\qbittorrent.exe" --save-path="${fullAnimePath}" --sequential --first-and-last --skip-dialog=true "${magnet}"`,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(`error: ${error}`);
-          return;
-        }
-      }
-    );
-
-    return { message: "Download started" };
-  } catch (error) {
-    return { message: "Failed to spawn download " + error };
-  }
 };
 
 export const downloadSubtitles = async (subtitlesLink: string) => {
@@ -146,7 +47,7 @@ export const downloadSubtitles = async (subtitlesLink: string) => {
         subtitlesLink = subtitlesLink + "/arabic";
       }
     }
-    console.log("Downloading subtitles from:", subtitlesLink);
+    // console.log("Downloading subtitles from:", subtitlesLink);
     const subtitlePage = await fetch(subtitlesLink);
     const subtitleHtml = await subtitlePage.text();
     const $ = cheerio.load(subtitleHtml);
@@ -171,4 +72,103 @@ export const downloadSubtitles = async (subtitlesLink: string) => {
   } catch (error) {
     console.error("Error downloading subtitles:", error);
   }
+};
+
+export const handleDaySelection = async (day: string, animeId: number) => {
+  const anime = await db
+    .update(library)
+    .set({ broadcastDay: day })
+    .where(eq(library.animeId, animeId))
+    .execute();
+
+  if (anime.changes === 0) {
+    return {
+      code: 404,
+      message: `Anime not in library `,
+    };
+  }
+
+  return {
+    code: 200,
+    message: `updated broadcast day to ${day}`,
+  };
+};
+
+type AddTorrentParams = {
+  animeId: number;
+  magnetUrl: string;
+  downloadSpeed?: number;
+  category?: string;
+};
+
+export async function addTorrent({
+  magnetUrl,
+  downloadSpeed,
+  animeId,
+}: AddTorrentParams): Promise<{ success: boolean; message: string }> {
+  const qbittorrentUrl = process.env.QBITTORRENT_URL;
+
+  if (!qbittorrentUrl) {
+    throw new Error("QBITTORRENT_URL is not set in environment variables");
+  }
+
+  if (!magnetUrl.match(/magnet:\?xt=urn:[a-z0-9]+:[a-z0-9]{32}/i)) {
+    return {
+      success: false,
+      message: "Magnet URI not valid",
+    };
+  }
+
+  const anime = await db
+    .select()
+    .from(library)
+    .where(eq(library.animeId, animeId))
+    .execute();
+
+  if (anime.length === 0) {
+    return {
+      success: false,
+      message: `Anime not in library `,
+    };
+  }
+
+  let { title } = anime[0];
+  title = sanitizeFolderName(title);
+  const animeSavePath = `${process.env.BASE_DOWNLOAD_PATH}${title}`;
+
+  if (!existsSync(animeSavePath)) {
+    mkdirSync(animeSavePath);
+  }
+
+  const formData = new FormData();
+  formData.append("urls", magnetUrl);
+  formData.append("firstLastPiecePrio", "true");
+  formData.append("sequentialDownload", "true");
+  formData.append("savepath", animeSavePath);
+
+  if (downloadSpeed !== 0 && downloadSpeed !== undefined) {
+    formData.append("dlLimit", downloadSpeed.toString());
+  }
+
+  // fix qbittorrent adding -----------------------------XXXXXXXXX on last formData item by adding test field
+  formData.append("test", "test");
+
+  // log the form data to the console for debugging purposes
+  const addTorrentResponse = await fetch(
+    `${qbittorrentUrl}/api/v2/torrents/add`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  if (!addTorrentResponse.ok) {
+    throw new Error("Failed to add torrent");
+  }
+
+  return { success: true, message: "Torrent added successfully" };
+}
+
+const sanitizeFolderName = (name: string) => {
+  return name.replace(/[^a-zA-Z0-9\s\-_]/g, "");
 };

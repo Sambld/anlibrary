@@ -37,3 +37,7 @@ next-env.d.ts
 
 # sqlite db file
 *.db
+database.db
+.env
+.env
+database.db

@@ -18,7 +18,7 @@ export const getAnimeSearchPageByReleaser = async ({
 }) => {
   try {
     const searchUrl = getNyaaSearchUrl(`${releaser} ${animeName}`);
-    console.log(searchUrl);
+    // console.log(searchUrl);
     const response = await fetch(searchUrl, { cache: "no-store" });
     const html = await response.text();
     const $ = cheerio.load(html);
