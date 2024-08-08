@@ -21,12 +21,12 @@ const speedOptions = [
 
 interface TorrentDownloaderProps {
   magnetUrl: string;
-  animeId: number;
+  animeTitle: string;
 }
 
 export default function TorrentDownloader({
   magnetUrl,
-  animeId,
+  animeTitle,
 }: TorrentDownloaderProps) {
   const [selectedSpeed, setSelectedSpeed] = useState<number | null>(null);
   const [customSpeed, setCustomSpeed] = useState<number>(0);
@@ -54,7 +54,7 @@ export default function TorrentDownloader({
     const response = await addTorrent({
       magnetUrl,
       downloadSpeed: speed || 0,
-      animeId,
+      animeTitle,
     });
 
     if (response.success) {

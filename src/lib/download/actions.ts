@@ -95,7 +95,7 @@ export const handleDaySelection = async (day: string, animeId: number) => {
 };
 
 type AddTorrentParams = {
-  animeId: number;
+  animeTitle: string;
   magnetUrl: string;
   downloadSpeed?: number;
   category?: string;
@@ -104,7 +104,7 @@ type AddTorrentParams = {
 export async function addTorrent({
   magnetUrl,
   downloadSpeed,
-  animeId,
+  animeTitle,
 }: AddTorrentParams): Promise<{ success: boolean; message: string }> {
   const qbittorrentUrl = process.env.QBITTORRENT_URL;
 
@@ -119,22 +119,8 @@ export async function addTorrent({
     };
   }
 
-  const anime = await db
-    .select()
-    .from(library)
-    .where(eq(library.animeId, animeId))
-    .execute();
-
-  if (anime.length === 0) {
-    return {
-      success: false,
-      message: `Anime not in library `,
-    };
-  }
-
-  let { title } = anime[0];
-  title = sanitizeFolderName(title);
-  const animeSavePath = `${process.env.BASE_DOWNLOAD_PATH}${title}`;
+  animeTitle = sanitizeFolderName(animeTitle);
+  const animeSavePath = `${process.env.BASE_DOWNLOAD_PATH}${animeTitle}`;
 
   if (!existsSync(animeSavePath)) {
     mkdirSync(animeSavePath);

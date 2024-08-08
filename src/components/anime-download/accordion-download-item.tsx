@@ -35,12 +35,12 @@ type DownloadAccodionProps = {
   children: React.ReactNode;
   items: NyaaEpisode[];
   valueKey?: number;
-  animeId: number;
+  animeTitle: string;
 };
 const AccordionDownloadItem = ({
   children,
   items,
-  animeId,
+  animeTitle,
   valueKey = 0,
 }: DownloadAccodionProps) => {
   return (
@@ -127,7 +127,7 @@ const AccordionDownloadItem = ({
                             <TooltipTrigger>
                               <TorrentDownloader
                                 magnetUrl={batch.magnet}
-                                animeId={animeId}
+                                animeTitle={animeTitle}
                               />
                             </TooltipTrigger>
                             <TooltipContent>

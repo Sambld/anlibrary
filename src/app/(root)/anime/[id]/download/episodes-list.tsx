@@ -61,7 +61,7 @@ const EpisodesList = async ({
       <Accordion type="single" collapsible className="max-w-full mt-10">
         {batches && batches.length > 0 && (
           <>
-            <AccordionDownloadItem animeId={animeId} items={batches}>
+            <AccordionDownloadItem animeTitle={animeTitle} items={batches}>
               <AccordionTrigger className="bg-crimson  px-4">
                 <span className="text-white text-sm">
                   Batches & BDs
@@ -78,7 +78,7 @@ const EpisodesList = async ({
               releasersEpisodes[releaser] &&
               releasersEpisodes[releaser].length > 0 && (
                 <AccordionDownloadItem
-                  animeId={animeId}
+                  animeTitle={animeTitle}
                   items={releasersEpisodes[releaser]}
                   valueKey={index + 1}
                 >
