@@ -14,7 +14,7 @@ export const getAnimeScheduleByDay = async (
   const url = `${JIKAN_BASE_URL}/schedules?filter=${day}&kids=false&kids=false`;
   let condition = true;
   let response;
-  response = await fetchWithRetry(url, { next: { revalidate: 3600 * 24 } });
+  response = await fetchWithRetry(url, { next: { revalidate: 3600 * 24 * 7 } });
   if (!response.ok) {
     console.log("Failed to fetch anime schedule by day retrying...");
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -35,6 +35,7 @@ export const getAnimeScheduleByDay = async (
 export const getAnimeSchedule = async (): Promise<AnimeSchedule> => {
   let result = {} as AnimeSchedule;
   for (const day of weekDays) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
     result[day] = await getAnimeScheduleByDay(day);
   }
   return result;
