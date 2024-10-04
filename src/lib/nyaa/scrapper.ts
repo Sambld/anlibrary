@@ -27,9 +27,11 @@ export const getAnimeEpisodesByReleasers = async ({
     const shapedJapaneseName = animeNameShaper(animeName.japanese);
 
     // Combine all releasers into a single search query
-    const combinedQuery = `(${releasers.join(
+    const combinedQuery = `( (${releasers.join(
       "|"
-    )}) ${shapedEnglishName} | (${releasers.join("|")}) ${shapedJapaneseName}`;
+    )}) ${shapedEnglishName} )| ( (${releasers.join(
+      "|"
+    )}) ${shapedJapaneseName} )`;
 
     for (let page = 1; page <= maxPages; page++) {
       const searchUrl = getNyaaSearchUrl(combinedQuery, "o=desc", page);
