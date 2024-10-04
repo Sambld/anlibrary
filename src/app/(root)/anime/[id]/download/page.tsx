@@ -66,7 +66,7 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           <a
             href={
               animeFromLibrary?.anime?.subtitlesLink ||
-              `https://subdl.com/search?query=${anime.data.title}`
+              `https://subdl.com/search/${anime.data.title}`
             }
             target="_blank"
           >

@@ -1,7 +1,6 @@
 import { Accordion, AccordionTrigger } from "@/components/ui/accordion";
 import {
   getAnimeBatches,
-  getAnimeEpisodesByReleaser,
   getAnimeEpisodesByReleasers,
 } from "@/lib/nyaa/scrapper";
 

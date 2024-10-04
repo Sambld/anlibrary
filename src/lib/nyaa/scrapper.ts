@@ -3,64 +3,11 @@ import * as cheerio from "cheerio";
 import { getEpisodes, getSearchResultCount } from "./helpers";
 import { NyaaEpisode } from "./types";
 import { animeNameShaper } from "../utils";
+
 export const getNyaaSearchUrl = (query: string, filters = "", page = 1) => {
-  return `${NYAA_BASE_URL}/?f=0&c=1_2&q=${query}&p=${page}&${filters}`;
-};
-
-export const getAnimeSearchPageByReleaser = async ({
-  animeName,
-  releaser,
-  page,
-}: {
-  animeName: string;
-  releaser: string;
-  page?: number;
-}) => {
-  try {
-    const searchUrl = getNyaaSearchUrl(`${releaser} ${animeName}`);
-    // console.log(searchUrl);
-    const response = await fetch(searchUrl, { cache: "no-store" });
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    return $;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const getAnimeEpisodesByReleaser = async ({
-  animeName,
-  releaser,
-}: {
-  animeName: string;
-  releaser: string;
-}): Promise<NyaaEpisode[]> => {
-  try {
-    const maxPages = 1;
-    let episodes: NyaaEpisode[] = [];
-    animeName = animeNameShaper(animeName);
-    // console.log(animeName);
-    for (let page = 1; page <= maxPages; page++) {
-      const searchPage = await getAnimeSearchPageByReleaser({
-        animeName,
-        releaser,
-        page,
-      });
-      if (searchPage) {
-        const items = getEpisodes({ $: searchPage });
-        episodes = [...episodes, ...items];
-        const { total } = getSearchResultCount(searchPage);
-        if (total <= page * 75) {
-          break;
-        }
-      }
-    }
-    return episodes;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+  return `${NYAA_BASE_URL}/?f=0&c=1_2&q=${encodeURIComponent(
+    query
+  )}&p=${page}&${filters}`;
 };
 
 export const getAnimeEpisodesByReleasers = async ({
@@ -74,32 +21,48 @@ export const getAnimeEpisodesByReleasers = async ({
   releasers: string[];
 }) => {
   try {
-    let episodes: {
-      [key: string]: NyaaEpisode[];
-    } = {};
-    for (const releaser of releasers) {
-      let releaserEpisodes: NyaaEpisode[] = [];
+    const maxPages = 3;
+    let allEpisodes: NyaaEpisode[] = [];
+    const shapedEnglishName = animeNameShaper(animeName.english);
+    const shapedJapaneseName = animeNameShaper(animeName.japanese);
 
-      for (let languageName of [animeName.english, animeName.japanese]) {
-        if (languageName) {
-          const _releaserEpisodes = await getAnimeEpisodesByReleaser({
-            animeName: languageName,
-            releaser,
-          });
-          if (_releaserEpisodes && _releaserEpisodes?.length > 0) {
-            const episodesSet = new Set<NyaaEpisode>([
-              ...releaserEpisodes,
-              ..._releaserEpisodes,
-            ]);
+    // Combine all releasers into a single search query
+    const combinedQuery = `(${releasers.join(
+      "|"
+    )}) ${shapedEnglishName} | (${releasers.join("|")}) ${shapedJapaneseName}`;
 
-            releaserEpisodes = Array.from(episodesSet);
-            break;
-          }
-        }
+    for (let page = 1; page <= maxPages; page++) {
+      const searchUrl = getNyaaSearchUrl(combinedQuery, "o=desc", page);
+      // console.log(searchUrl);
+
+      const response = await fetch(searchUrl, { cache: "no-store" });
+      const html = await response.text();
+      const $ = cheerio.load(html);
+
+      const items = getEpisodes({ $ });
+      allEpisodes = [...allEpisodes, ...items];
+
+      const { total } = getSearchResultCount($);
+      if (total <= page * 75) {
+        break;
       }
-      if (releaserEpisodes.length > 0) episodes[releaser] = releaserEpisodes;
     }
-    return episodes;
+
+    // Separate episodes based on releaser
+    const episodesByReleaser: { [key: string]: NyaaEpisode[] } = {};
+    for (const episode of allEpisodes) {
+      const matchingReleaser = releasers.find((releaser) =>
+        episode.title.toLowerCase().includes(releaser.toLowerCase())
+      );
+      if (matchingReleaser) {
+        if (!episodesByReleaser[matchingReleaser]) {
+          episodesByReleaser[matchingReleaser] = [];
+        }
+        episodesByReleaser[matchingReleaser].push(episode);
+      }
+    }
+
+    return episodesByReleaser;
   } catch (error) {
     console.error(error);
     throw error;
@@ -118,11 +81,16 @@ export const getAnimeBatches = async ({
   const shapedAnimeTitleJapanese = animeNameShaper(animeTitle.japanese);
   try {
     const searchUrls = [
-      getNyaaSearchUrl(`${shapedAnimeTitle} BD`, "s=seeders&o=desc"),
+      getNyaaSearchUrl(
+        `
+        ${shapedAnimeTitle} BD`,
+        "s=seeders&o=desc"
+      ),
       getNyaaSearchUrl(`${shapedAnimeTitle} Batch`, "s=seeders&o=desc"),
       getNyaaSearchUrl(`${shapedAnimeTitleJapanese} BD`, "s=seeders&o=desc"),
       getNyaaSearchUrl(`${shapedAnimeTitleJapanese} Batch`, "s=seeders&o=desc"),
     ];
+    // console.log(searchUrls);
 
     // Fetch both URLs in parallel
     const [responseBD, responseBatch] = await Promise.all(

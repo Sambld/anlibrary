@@ -132,7 +132,8 @@ export const animeNameShaper = (name: string) => {
   // remove the season part from the anime name
 
   // Example: "Attack on Titan 4th Season Part X" => "Attack on Titan 4th Season"
-  const newName = name.replace(
+  console.log(name);
+  let newName = name.replace(
     /(\d+)(st|nd|rd|th) Season|Season (\d+)/,
     (match, p1, p2, p3) => {
       if (p3) {
@@ -142,6 +143,8 @@ export const animeNameShaper = (name: string) => {
       }
     }
   );
+  // remove (Tv) or  TV from the anime name ( it has to a space before )
+  newName = newName.replace(/ (\(TV\)|TV)$/, "").trim();
   return newName;
 };
 
