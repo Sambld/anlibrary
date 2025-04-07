@@ -10,3 +10,10 @@ CREATE TABLE `library` (
 	`status` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP
 );
+--> statement-breakpoint
+CREATE TABLE `search_names` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
+	`anime_id` integer NOT NULL,
+	`created_at` text DEFAULT CURRENT_TIMESTAMP
+);

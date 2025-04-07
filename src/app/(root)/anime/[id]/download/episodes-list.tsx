@@ -8,6 +8,7 @@ import React from "react";
 import { releasers } from "@/constants/consts";
 import AccordionDownloadItem from "@/components/anime-download/accordion-download-item";
 import { NyaaEpisode } from "@/lib/nyaa/types";
+import { SearchTermType } from "@/db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ type EpisodesListProps = {
   animeTitle: string;
   englishTitle: string;
   airing: boolean;
+  animeSearchTermsList: SearchTermType[];
 };
 
 const EpisodesList = async ({
@@ -23,6 +25,7 @@ const EpisodesList = async ({
   animeTitle,
   englishTitle,
   airing,
+  animeSearchTermsList,
 }: EpisodesListProps) => {
   let releasersEpisodes: { [key: string]: NyaaEpisode[] } | null = null;
   let batches: NyaaEpisode[] = [];
@@ -33,6 +36,7 @@ const EpisodesList = async ({
         japanese: animeTitle,
       },
       releasers: releasers,
+      searchTermsList: animeSearchTermsList.map((term) => term.name),
     });
   } else {
     batches = await getAnimeBatches({
@@ -57,7 +61,7 @@ const EpisodesList = async ({
           </p>
         </div>
       )}
-      <Accordion type="single" collapsible className="max-w-full mt-10">
+      <Accordion type="single" collapsible className="max-w-full mt-4">
         {batches && batches.length > 0 && (
           <>
             <AccordionDownloadItem animeTitle={animeTitle} items={batches}>

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "996b1b43-af38-4754-90ee-595e531e5817",
+  "id": "b8b6c4ac-412c-4115-b909-3868b37adc62",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "library": {
@@ -66,6 +66,44 @@
         "status": {
           "name": "status",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "search_names": {
+      "name": "search_names",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "anime_id": {
+          "name": "anime_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

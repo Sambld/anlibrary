@@ -13,12 +13,14 @@ export const getNyaaSearchUrl = (query: string, filters = "", page = 1) => {
 export const getAnimeEpisodesByReleasers = async ({
   animeName,
   releasers,
+  searchTermsList,
 }: {
   animeName: {
     english: string;
     japanese: string;
   };
   releasers: string[];
+  searchTermsList: string[];
 }) => {
   try {
     const maxPages = 3;
@@ -26,16 +28,14 @@ export const getAnimeEpisodesByReleasers = async ({
     const shapedEnglishName = animeNameShaper(animeName.english);
     const shapedJapaneseName = animeNameShaper(animeName.japanese);
 
-    // Combine all releasers into a single search query
-    const combinedQuery = `( (${releasers.join(
-      "|"
-    )}) ${shapedEnglishName} )| ( (${releasers.join(
-      "|"
-    )}) ${shapedJapaneseName} )`;
+    const combinedQuery = buildSearchQuery({
+      releasers,
+      animeName: { english: shapedEnglishName, japanese: shapedJapaneseName },
+      searchTerms: searchTermsList,
+    });
 
     for (let page = 1; page <= maxPages; page++) {
       const searchUrl = getNyaaSearchUrl(combinedQuery, "o=desc", page);
-      // console.log(searchUrl);
 
       const response = await fetch(searchUrl, { cache: "no-store" });
       const html = await response.text();
@@ -125,5 +125,37 @@ export const getAnimeBatches = async ({
   } catch (error) {
     console.error(error);
     throw error; // Re-throw error after logging
+  }
+};
+
+interface AnimeName {
+  english: string;
+  japanese: string;
+}
+
+interface SearchQueryBuilderParams {
+  releasers: string[];
+  animeName: AnimeName;
+  searchTerms?: string[];
+}
+
+const buildSearchQuery = ({
+  releasers,
+  animeName,
+  searchTerms = [],
+}: SearchQueryBuilderParams): string => {
+  const shapedEnglishName = animeNameShaper(animeName.english);
+  const shapedJapaneseName = animeNameShaper(animeName.japanese);
+
+  const releaserPattern = `(${releasers.join("|")})`;
+
+  if (searchTerms.length === 0) {
+    // Use original logic with English and Japanese names
+    return `( ${releaserPattern} ${shapedEnglishName} )| ( ${releaserPattern} ${shapedJapaneseName} )`;
+  } else {
+    // Use searchTerms instead of English/Japanese names
+    return searchTerms
+      .map((term: string) => `( ${releaserPattern} ${term} )`)
+      .join(" | ");
   }
 };

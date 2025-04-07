@@ -21,9 +21,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.className} ${josefinSans.className} overflow-x-hidden z-10 `}
-      >
+      <body className={`${josefinSans.className} overflow-x-hidden z-10 `}>
         <Image
           style={{
             // zIndex: -1,

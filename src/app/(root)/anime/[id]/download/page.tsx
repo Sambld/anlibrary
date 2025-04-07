@@ -9,16 +9,21 @@ import LoadingInfinity from "@/components/loading-infinity";
 import Link from "next/link";
 import OpenInNyaa from "@/components/anime-page/open-in-nyaa";
 import { Button } from "@/components/ui/button";
-import EpisodeBroadcastCountDown from "@/components/today-animes/episode-broadcast-countdown";
 import OpenDownloadFolder from "@/components/anime-download/open-download-folder";
-import { getAnimeFromLibrary, isAnimeInLibrary } from "@/lib/library";
+import { getAnimeFromLibrary } from "@/lib/library";
 import SetReleaseDay from "@/components/anime-download/set-anime-release-day";
+import SearchTerms from "@/components/anime-download/search-terms";
+import { getAnimeSearchTerms } from "@/lib/library/actions";
 
 export const dynamic = "force-dynamic";
 
 const DownloadPage = async ({ params }: { params: { id: string } }) => {
   const anime = await getFullAnimeById(params.id);
   const animeFromLibrary = await getAnimeFromLibrary(parseInt(params.id));
+  const animeSearchTermsList = await getAnimeSearchTerms({
+    animeId: parseInt(params.id),
+  });
+
   return (
     <div className="max-sm:p-5 p-10 mb-12 ">
       <div className="flex gap-5 max-sm:flex-col">
@@ -85,8 +90,14 @@ const DownloadPage = async ({ params }: { params: { id: string } }) => {
           />
         )}
       </div>
+
+      <SearchTerms
+        searchTerms={animeSearchTermsList}
+        animeId={anime.data.mal_id}
+      />
       <Suspense fallback={<LoadingInfinity />}>
         <EpisodesList
+          animeSearchTermsList={animeSearchTermsList}
           animeId={anime.data.mal_id}
           animeTitle={anime.data.title}
           englishTitle={anime.data.title_english}
