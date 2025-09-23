@@ -5,8 +5,6 @@ import { library } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { existsSync, mkdirSync } from "fs";
 import { exec } from "child_process";
-import { getFullAnimeById } from "../jikan_api/api";
-import * as cheerio from "cheerio";
 
 export const isValidPath = (path: string) => {
   // check if the path is valid on the file system
@@ -38,42 +36,6 @@ export const openFolder = async (id: number) => {
   exec(`start explorer.exe "${fullPath}"`);
 };
 
-export const downloadSubtitles = async (subtitlesLink: string) => {
-  try {
-    if (!subtitlesLink.endsWith("/arabic")) {
-      if (subtitlesLink.endsWith("/")) {
-        subtitlesLink = subtitlesLink + "arabic";
-      } else {
-        subtitlesLink = subtitlesLink + "/arabic";
-      }
-    }
-    // console.log("Downloading subtitles from:", subtitlesLink);
-    const subtitlePage = await fetch(subtitlesLink);
-    const subtitleHtml = await subtitlePage.text();
-    const $ = cheerio.load(subtitleHtml);
-    const downloadLinks = $("a").map((index, element) => {
-      const $element = $(element);
-      const href = $element.attr("href");
-      const isDownload = $element.attr("data-umami-event");
-      if (
-        href?.startsWith("https://dl.subdl.com/") &&
-        isDownload === "download"
-      ) {
-        return href;
-      }
-    });
-
-    // download the last link
-    return downloadLinks[downloadLinks.length - 1];
-    const lastLink = downloadLinks[downloadLinks.length - 1];
-    if (lastLink) {
-    }
-    // console.log(downloadLinks);
-  } catch (error) {
-    console.error("Error downloading subtitles:", error);
-  }
-};
-
 export const handleDaySelection = async (day: string, animeId: number) => {
   const anime = await db
     .update(library)
@@ -90,7 +52,7 @@ export const handleDaySelection = async (day: string, animeId: number) => {
 
   return {
     code: 200,
-    message: `updated broadcast day to ${day}`,
+    message: `update broadcast day to ${day}`,
   };
 };
 
@@ -120,7 +82,7 @@ export async function addTorrent({
   }
 
   animeTitle = sanitizeFolderName(animeTitle);
-  const animeSavePath = `${process.env.BASE_DOWNLOAD_PATH}${animeTitle}`;
+  const animeSavePath = process.env.BASE_DOWNLOAD_PATH ? `${process.env.BASE_DOWNLOAD_PATH}${animeTitle}` : animeTitle;
 
   if (!existsSync(animeSavePath)) {
     mkdirSync(animeSavePath);
@@ -131,7 +93,7 @@ export async function addTorrent({
   formData.append("firstLastPiecePrio", "true");
   formData.append("sequentialDownload", "true");
   formData.append("savepath", animeSavePath);
-
+  formData.append("upLimit", "10240"); // Set upload limit to 10KB/s
   if (downloadSpeed !== 0 && downloadSpeed !== undefined) {
     formData.append("dlLimit", downloadSpeed.toString());
   }

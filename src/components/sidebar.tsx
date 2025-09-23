@@ -5,19 +5,21 @@ import { getMenuList } from "@/lib/menu-list";
 import MenuItem from "./menu-item";
 import Image from "next/image";
 import { ModeToggle } from "./mode-toggle";
+import { useTheme } from "next-themes";
 
 export const SideBar = () => {
   const path = usePathname();
   const menuList = getMenuList(path);
+  const { theme } = useTheme();
   return (
     <>
       <nav className="h-screen sticky left-0 top-0 w-60 max-md:w-auto max-md:p-2 max-md:pt-6  border p-6 flex flex-col gap-5 max-sm:hidden">
         <Image
-          src={"/assets/logo.png"}
+          src={theme === "light" ? "/assets/logo_light.png" : "/assets/logo.png"}
           width={100}
           alt="logo"
           height={100}
-          className="max-md:hidden self-center"
+          className="max-md:hidden self-center mb-5"
         />
 
         {/* <div className="max-sm:mt-10"> */}

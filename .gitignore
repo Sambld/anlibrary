@@ -38,3 +38,5 @@ next-env.d.ts
 # sqlite db file
 *.db
 
+# github copilot
+/.github

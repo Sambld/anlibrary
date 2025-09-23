@@ -17,7 +17,7 @@ const AnimeCard = ({
   download = false,
 }: AnimeCardProps) => {
   return (
-    <div className="relative transition hover:scale-[97%] duration-200 group">
+    <div className="relative transition hover:scale-[99%] duration-200 group">
       <Link href={`/anime/${mal_id}`} className="peer">
         <div className="w-[165px] min-h-[280px] max-sm:w-[150px]  dark:bg-zinc-900 bg-slate-100 rounded-lg ">
           {/* <div className="w-[220px] min-h-[310px] max-sm:w-[150px]  dark:bg-zinc-900 bg-slate-100 rounded-lg"> */}
@@ -40,7 +40,7 @@ const AnimeCard = ({
       </Link>
       {download && (
         <Link href={`/anime/${mal_id}/download`}>
-          <div className="absolute top-[168px] w-full text-center right-0 p-2 bg-green-600 text-white rounded-bl-lg z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute top-[169px] w-full text-center right-0 p-2 bg-green-600 text-white z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <p className="text-xs">Go to download page</p>
           </div>
         </Link>

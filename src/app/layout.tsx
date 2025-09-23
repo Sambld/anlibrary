@@ -21,6 +21,9 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/assets/favicon.ico" sizes="any" />
+      </head>
       <body className={`${josefinSans.className} overflow-x-hidden z-10 `}>
         <Image
           style={{

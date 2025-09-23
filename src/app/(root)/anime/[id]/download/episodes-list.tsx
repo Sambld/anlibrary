@@ -1,8 +1,14 @@
 import { Accordion, AccordionTrigger } from "@/components/ui/accordion";
-import {
-  getAnimeBatches,
-  getAnimeEpisodesByReleasers,
-} from "@/lib/nyaa/scrapper";
+// import {
+//   getAnimeBatches,
+//   getAnimeEpisodesByReleasers,
+// } from "@/lib/nyaa/scrapper";
+
+// Replace existing imports
+import { 
+  getAnimeEpisodesByReleasersXML as getAnimeEpisodesByReleasers, 
+  getAnimeBatchesXML as getAnimeBatches 
+} from "@/lib/nyaa/nyaa_xml_scrapper";
 
 import React from "react";
 import { releasers } from "@/constants/consts";
@@ -29,7 +35,9 @@ const EpisodesList = async ({
 }: EpisodesListProps) => {
   let releasersEpisodes: { [key: string]: NyaaEpisode[] } | null = null;
   let batches: NyaaEpisode[] = [];
+  
   if (airing) {
+    // For airing anime, only fetch episodes by releasers
     releasersEpisodes = await getAnimeEpisodesByReleasers({
       animeName: {
         english: englishTitle,
@@ -39,12 +47,26 @@ const EpisodesList = async ({
       searchTermsList: animeSearchTermsList.map((term) => term.name),
     });
   } else {
-    batches = await getAnimeBatches({
-      animeTitle: {
-        english: englishTitle,
-        japanese: animeTitle,
-      },
-    });
+    // For finished anime, fetch both batches AND episodes by releasers
+    const [batchesResult, releasersEpisodesResult] = await Promise.all([
+      getAnimeBatches({
+        animeTitle: {
+          english: englishTitle,
+          japanese: animeTitle,
+        },
+      }),
+      getAnimeEpisodesByReleasers({
+        animeName: {
+          english: englishTitle,
+          japanese: animeTitle,
+        },
+        releasers: releasers,
+        searchTermsList: animeSearchTermsList.map((term) => term.name),
+      })
+    ]);
+    
+    batches = batchesResult;
+    releasersEpisodes = releasersEpisodesResult;
   }
   const releaserKeys = releasersEpisodes ? Object.keys(releasersEpisodes) : [];
 

@@ -6,4 +6,5 @@ export type NyaaEpisode = {
   seeders: number;
   leechers: number;
   date: string;
+  url: string;
 };

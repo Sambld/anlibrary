@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { Folder } from "lucide-react";
-import { downloadSubtitles, openFolder } from "@/lib/download/actions";
+import { openFolder } from "@/lib/download/actions";
 
 const OpenDownloadFolder = ({ id }: { id: number }) => {
   const handleOpenFolder = async () => {

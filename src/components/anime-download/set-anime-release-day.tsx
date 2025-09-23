@@ -45,9 +45,6 @@ export default function WeekdaySelector({
         const response = await handleDaySelection(day, animeId);
         if (response.code === 200) {
           toast({
-            style: {
-              color: "#16a34a",
-            },
             title: response.message,
             duration: 3000,
           });

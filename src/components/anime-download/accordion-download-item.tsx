@@ -6,7 +6,6 @@ import {
   ArrowBigDown,
   Download,
   Magnet,
-  MonitorDownIcon,
 } from "lucide-react";
 import React from "react";
 import { AccordionItem, AccordionContent } from "../ui/accordion";
@@ -22,7 +21,6 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import { NyaaEpisode } from "@/lib/nyaa/types";
-import { useToast } from "../ui/use-toast";
 import {
   TooltipProvider,
   Tooltip,
@@ -50,10 +48,10 @@ const AccordionDownloadItem = ({
         <ScrollArea>
           <div className="max-h-[400px]">
             <Table className="overflow-auto">
-              <TableCaption>{items.length} batch</TableCaption>
               <TableHeader className="sticky top-0 bg-secondary ">
                 <TableRow className="border-green-300 border-b-2 ">
                   <TableHead>Title</TableHead>
+                  <TableHead>Download</TableHead>
                   <TableHead>Size</TableHead>
                   <TableHead className="max-lg:hidden">
                     <div className="flex items-center">
@@ -76,57 +74,27 @@ const AccordionDownloadItem = ({
                     </div>
                   </TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Links</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items.map((batch) => (
-                  <TableRow key={batch.title}>
+                {items.map((episode) => (
+                  <TableRow key={episode.title}>
                     <TableCell className="max-sm:text-xs">
-                      {batch.title}
-                    </TableCell>
-                    <TableCell className="max-sm:text-xs">
-                      {batch.size}
-                    </TableCell>
-                    <TableCell className="text-green-600 max-lg:hidden">
-                      {batch.seeders}
-                    </TableCell>
-                    <TableCell className="text-red-600  max-lg:hidden">
-                      {batch.leechers}
-                    </TableCell>
-                    <TableCell>
-                      {isToday(new Date(batch.date)) ? (
-                        <Badge className="bg-green-600 hover:bg-green-700  text-xs text-zinc-50 max-sm:px-2 px-4">
-                          <span className="max-sm:text-[8px]">Today</span>
-                        </Badge>
-                      ) : isYesterday(new Date(batch.date)) ? (
-                        <Badge className="bg-yellow-600 hover:bg-yellow-700  text-zinc-50 max-sm:px-2 px-4">
-                          <span className="max-sm:text-[8px]">Yesterday</span>
-                        </Badge>
-                      ) : (
-                        batch.date
-                      )}
+                      <a className="hover:underline" href={episode.url} target="_blank" rel="noopener noreferrer">{episode.title}</a>
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1 max-sm:flex-col">
-                        <a href={`${NYAA_BASE_URL}${batch.torrentFile}`}>
+                        {/* <a href={`${NYAA_BASE_URL}${episode.torrentFile}`}>
                           <Download
                             size={20}
                             className="text-blue-600 cursor-pointer"
                           />
-                        </a>
-                        <a href={batch.magnet}>
-                          <Magnet
-                            size={20}
-                            className="text-blue-600 cursor-pointer"
-                          />
-                        </a>
-
+                        </a> */}
                         <TooltipProvider delayDuration={100}>
                           <Tooltip>
                             <TooltipTrigger>
                               <TorrentDownloader
-                                magnetUrl={batch.magnet}
+                                magnetUrl={episode.magnet}
                                 animeTitle={animeTitle}
                               />
                             </TooltipTrigger>
@@ -135,8 +103,39 @@ const AccordionDownloadItem = ({
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
+                        <a href={episode.magnet}>
+                          <Magnet
+                            size={20}
+                            className="text-blue-600 cursor-pointer"
+                          />
+                        </a>
+
                       </div>
                     </TableCell>
+                    <TableCell className="max-sm:text-xs">
+                      {episode.size}
+                    </TableCell>
+                    <TableCell className="text-green-600 max-lg:hidden">
+                      {episode.seeders}
+                    </TableCell>
+                    <TableCell className="text-red-600  max-lg:hidden">
+                      {episode.leechers}
+                    </TableCell>
+                    <TableCell>
+                      {isToday(new Date(episode.date)) ? (
+                        <Badge className="bg-green-600 hover:bg-green-700 text-xs text-zinc-50 max-sm:px-2 px-4 ">
+                          <span className="max-sm:text-[8px]">Today</span>                      
+                        </Badge>
+
+                      ) : isYesterday(new Date(episode.date)) ? (
+                        <Badge className="bg-yellow-600 hover:bg-yellow-700  text-zinc-50 max-sm:px-2 px-4">
+                          <span className="max-sm:text-[8px]">Yesterday</span>
+                        </Badge>
+                      ) : (
+                        episode.date
+                      )}
+                    </TableCell>
+                    
                   </TableRow>
                 ))}
               </TableBody>
